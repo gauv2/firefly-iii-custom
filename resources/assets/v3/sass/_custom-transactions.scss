@@ -442,8 +442,16 @@ a.ff-tag:hover {
     outline: none;
 }
 
+// the whole amount row shows focus, not a box inside it
+.ff-amount input:focus-visible {
+    outline: none !important;
+}
+
 .ff-amount:focus-within {
     border-bottom-color: var(--ff-accent-hover);
+    outline: 2px solid var(--ff-focus);
+    outline-offset: 4px;
+    border-radius: 4px;
 }
 
 .ff-field {

@@ -22,7 +22,7 @@
                 </li>
             </template>
             <li class="nav-item split_add_btn" role="presentation">
-                <button class="nav-link" type="button" role="tab" @click="addSplit()"><em class="bi bi-plus-circle"></em></button>
+                <button class="nav-link" type="button" role="tab" @click="addSplit()" aria-label="Add a split" title="Add a split"><em class="bi bi-plus-circle" aria-hidden="true"></em></button>
             </li>
             <li class="nav-item">
                 <a class="nav-link disabled" aria-disabled="true">

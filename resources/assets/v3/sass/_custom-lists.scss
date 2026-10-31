@@ -130,3 +130,27 @@
     color: var(--ff-text-1) !important;
     background: var(--ff-surface-sunken) !important;
 }
+
+// full transaction form: the submit button's text-white utility would fail contrast on the dark-mode accent
+.btn-success.text-white,
+.btn-primary.text-white {
+    color: var(--ff-on-accent) !important;
+}
+
+// the tag picker's inner text field is a 24 px target at least
+.form-control.dropdown input {
+    min-height: 24px;
+}
+
+// card header with a create button (components/elements/card-header-with-menu)
+.ff-card-head-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 12px;
+}
+
+.ff-card-head-row .btn {
+    white-space: nowrap;
+}
