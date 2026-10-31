@@ -20,11 +20,13 @@
 
 @use "bootstrap-icons/font/bootstrap-icons.css";
 @use "@fontsource/roboto/400.css" as roboto400;
+// custom: Geist replaces Roboto (see _custom-theme.scss)
+@use "@fontsource-variable/geist/index.css" as geist;
 
 $color-mode-type: data;
 $link-decoration: none;
-$font-family-sans-serif: "Roboto", sans-serif;
-$font-size-base: 0.9rem;
+$font-family-sans-serif: "Geist Variable", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+$font-size-base: 0.875rem;
 
 // colors are for light mode.
 //$danger: #cd5029; // original
@@ -737,3 +739,6 @@ td.thirty th.thirty {
 //// hover buttons
 //
 //
+
+// custom: Firefly III Custom redesign (tokens, shell, home)
+@import "custom-theme";
