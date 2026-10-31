@@ -1,8 +1,12 @@
 <!-- begin create menu -->
-<li class="nav-item dropdown">
-    <a class="nav-link" id="create-menu" data-bs-toggle="dropdown" href="#" aria-expanded="false">
-        <em class="bi bi-plus-circle"></em>
+{{-- custom: one primary "Add transaction" button; the caret opens everything else you can create --}}
+<li class="nav-item ff-add">
+    <div class="btn-group">
+    <a href="{{ route('transactions.create', ['withdrawal']) }}?_from={{ urlencode($FF3_FROM) }}" class="btn btn-primary ff-add-main">
+        <em class="bi bi-plus-lg" aria-hidden="true"></em>
+        <span class="ff-add-label">Add transaction</span>
     </a>
+    <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" id="create-menu" data-bs-toggle="dropdown" aria-expanded="false" aria-label="More things to create"></button>
     <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
 
 
@@ -152,6 +156,7 @@
                 </div>
             </div>
         </a>
+    </div>
     </div>
 </li>
 <!-- end create menu -->

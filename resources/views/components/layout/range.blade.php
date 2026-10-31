@@ -1,14 +1,23 @@
-<li class="nav-item dropdown" id="date-dropdown">
+{{-- custom: previous / period / next. The arrows click the menu's own prev and next items (js/custom/shell.js) --}}
+<li class="nav-item dropdown ff-period" id="date-dropdown">
+    <button type="button" class="ff-icon-btn" id="ff-period-prev" aria-label="Previous period" title="Previous period">
+        <em class="bi bi-chevron-left" aria-hidden="true"></em>
+    </button>
     <a
         href="#"
-        class="nav-link"
+        class="nav-link ff-period-label"
         data-bs-toggle="dropdown"
         aria-expanded="false"
         id="date-range"
+        title="Choose a period"
     >
-        <em class="bi bi-calendar"></em>
-        <span class="daterange-holder d-none d-md-inline"></span>
+        <span class="daterange-holder"></span>
+        <span class="ff-period-pretty" aria-hidden="true"></span>
+        <em class="bi bi-chevron-down ff-period-caret" aria-hidden="true"></em>
     </a>
+    <button type="button" class="ff-icon-btn" id="ff-period-next" aria-label="Next period" title="Next period">
+        <em class="bi bi-chevron-right" aria-hidden="true"></em>
+    </button>
     <ul
         x-data="dates" x-bind="eventListeners"
         class="dropdown-menu"

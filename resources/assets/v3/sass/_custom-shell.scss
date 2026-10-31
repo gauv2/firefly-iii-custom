@@ -1,0 +1,271 @@
+/*
+ * _custom-shell.scss
+ * Firefly III Custom: top bar, period switcher, search, add button and the phone tab bar.
+ */
+
+.ff-shell .app-header .container-fluid {
+    gap: 12px;
+    padding-left: 12px;
+    padding-right: 16px;
+    flex-wrap: nowrap;
+}
+
+.ff-shell .app-header .nav-link {
+    color: var(--ff-text-2);
+    border-radius: 8px;
+    min-width: 36px;
+    min-height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    padding: 0 8px;
+}
+
+.ff-shell .app-header .nav-link:hover {
+    background: var(--ff-surface-sunken);
+    color: var(--ff-text-1);
+}
+
+.ff-start {
+    align-items: center;
+    gap: 4px;
+    min-width: 0;
+}
+
+// period switcher
+.ff-period {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.ff-icon-btn {
+    width: 32px;
+    height: 32px;
+    display: inline-grid;
+    place-items: center;
+    border: 0;
+    border-radius: 8px;
+    background: none;
+    color: var(--ff-text-2);
+    flex: none;
+}
+
+.ff-icon-btn:hover {
+    background: var(--ff-surface-sunken);
+    color: var(--ff-text-1);
+}
+
+.ff-shell .app-header .ff-period-label {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ff-text-1);
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.ff-period-label .ff-period-caret {
+    font-size: 11px;
+    color: var(--ff-text-3);
+}
+
+// show the readable label once shell.js has filled it in
+.ff-period .ff-period-pretty {
+    display: none;
+}
+.ff-period.ff-period-ready .daterange-holder {
+    display: none;
+}
+.ff-period.ff-period-ready .ff-period-pretty {
+    display: inline;
+}
+
+// search
+.ff-search {
+    flex: 1 1 auto;
+    max-width: 380px;
+    min-width: 0;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 36px;
+    padding: 0 10px 0 12px;
+    border: 1px solid var(--ff-border-strong);
+    border-radius: 8px;
+    background: var(--ff-surface-raised);
+    color: var(--ff-text-3);
+}
+
+.ff-search:focus-within {
+    border-color: var(--ff-accent);
+    box-shadow: 0 0 0 3px var(--bs-focus-ring-color);
+}
+
+.ff-search input {
+    border: 0;
+    background: none;
+    outline: none;
+    flex: 1;
+    min-width: 0;
+    color: var(--ff-text-1);
+    font-size: 13.5px;
+}
+
+.ff-search input::placeholder {
+    color: var(--ff-text-3);
+}
+
+.ff-search kbd {
+    font: 500 11px/1 var(--bs-body-font-family);
+    background: none;
+    color: var(--ff-text-3);
+    border: 1px solid var(--ff-border-strong);
+    border-radius: 4px;
+    padding: 3px 5px;
+}
+
+.ff-end {
+    gap: 2px;
+    flex: none;
+}
+
+.ff-end > .ff-search + * {
+    margin-left: 0;
+}
+
+// add transaction
+.ff-add {
+    margin-left: 8px;
+}
+
+.ff-add .btn {
+    min-height: 36px;
+}
+
+.ff-add .dropdown-toggle-split {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    border-left: 1px solid rgb(255 255 255 / 0.25);
+}
+
+.ff-add .dropdown-item-title {
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0;
+}
+
+// the sidebar search link is only needed when the top-bar search is hidden
+.ff-search-link {
+    display: none;
+}
+
+// page header
+.ff-crumbs .breadcrumb {
+    justify-content: flex-end;
+}
+
+// phone tab bar
+.ff-tabbar {
+    display: none;
+}
+
+@media (max-width: 991.98px) {
+    .ff-tabbar {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        align-items: center;
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: calc(64px + env(safe-area-inset-bottom, 0px));
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+        background: var(--ff-surface-base);
+        border-top: 1px solid var(--ff-border);
+        z-index: 1030;
+    }
+
+    .ff-tabbar a {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        height: 100%;
+        color: var(--ff-text-3);
+        font-size: 11px;
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+    .ff-tabbar a em {
+        font-size: 19px;
+        line-height: 1;
+    }
+
+    .ff-tabbar a[aria-current="page"] {
+        color: var(--ff-accent-text);
+    }
+
+    .ff-tabbar .ff-fab {
+        width: 46px;
+        height: 46px;
+        border-radius: 14px;
+        background: var(--ff-accent);
+        color: var(--ff-on-accent);
+        display: grid;
+        place-items: center;
+    }
+
+    .ff-tabbar .ff-fab em {
+        font-size: 22px;
+    }
+
+    .app-main {
+        padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+    }
+
+    .app-footer {
+        padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+    }
+
+    .ff-add {
+        display: none;
+    }
+
+    .ff-crumbs {
+        display: none;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .ff-search {
+        display: none;
+    }
+
+    .ff-search-link {
+        display: block;
+    }
+
+    .ff-shell .app-header .container-fluid {
+        padding-left: 6px;
+        padding-right: 8px;
+        gap: 4px;
+    }
+
+    .ff-end {
+        margin-left: auto;
+    }
+
+    .ff-shell .app-header .ff-period-label {
+        font-size: 14px;
+        padding: 0 4px;
+    }
+
+    // keep the top bar to what fits: help moves out of the way on phones
+    .ff-end #help {
+        display: none;
+    }
+}

@@ -69,7 +69,7 @@
         <meta name="color-scheme" content="light">
     @endif
 
-    @vite(['sass/app.scss'])
+    @vite(['sass/app.scss', 'js/custom/shell.js'])
 
     <x-layout.fav-icons/>
     <!--end::Accessibility Features-->
@@ -89,21 +89,31 @@
 <!-- tussen -->
 
 <!--begin::App Wrapper-->
-<div class="app-wrapper compact-mode">
+<div class="app-wrapper ff-shell">
     <!--begin::Header-->
     <nav class="app-header navbar navbar-expand bg-body">
         <!--begin::Container-->
         <div class="container-fluid">
             <!--begin::Start Navbar Links-->
-            <ul class="navbar-nav">
+            <ul class="navbar-nav ff-start">
                 <li class="nav-item">
-                    <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button">
-                        <i class="bi bi-list"></i>
+                    <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button" aria-label="Show or hide the menu" title="Menu">
+                        <i class="bi bi-list" aria-hidden="true"></i>
                     </a>
                 </li>
+                <!-- start: date range selector -->
+                <x-layout.range/>
+                <!-- end: date range selector -->
             </ul>
+            {{-- custom: search lives in the top bar --}}
+            <form action="{{ route('search.index') }}" method="get" class="ff-search" role="search">
+                <em class="bi bi-search" aria-hidden="true"></em>
+                <label class="visually-hidden" for="searchInput">{{ trans('firefly.searchPlaceholder') }}</label>
+                <input autocomplete="off" type="search" id="searchInput" name="search" placeholder="Search transactions, accounts, tags" value="{{ $query ?? '' }}" spellcheck="false">
+                <kbd aria-hidden="true">/</kbd>
+            </form>
             <!--begin::End Navbar Links-->
-            <ul class="navbar-nav ms-auto">
+            <ul class="navbar-nav ms-auto align-items-center ff-end">
                 @if($FF_IS_DEVELOP)
                 <li class="nav-item">
                     <span class="nav-link">
@@ -118,15 +128,10 @@
                 </li>
                 @endif
 
-                <!-- start: date range selector -->
-                <x-layout.range/>
-                <!-- end: date range selector -->
-
-
                 <!-- anonymous -->
 
                 <li class="nav-item">
-                    <a class="nav-link" href="#" id="anonymous">
+                    <a class="nav-link" href="#" id="anonymous" aria-label="{{ $anonymous ? 'Show amounts' : 'Hide amounts' }}" title="{{ $anonymous ? 'Show amounts' : 'Hide amounts' }}">
                         @if($anonymous)
                             <span class="money-negative bi bi-eye-slash"></span>
                         @endif
@@ -139,8 +144,8 @@
                 <!-- help button -->
                 <li class="nav-item">
                     <a href="#" class="nav-link" id="help" data-extra="{{ $objectType ?? '' }}"
-                       data-route="{{ $original_route_name }}" data-bs-toggle="modal" data-bs-target="#helpModal">
-                        <em class="bi bi-question-circle"></em>
+                       data-route="{{ $original_route_name }}" data-bs-toggle="modal" data-bs-target="#helpModal" aria-label="Help for this page" title="Help for this page">
+                        <em class="bi bi-question-circle" aria-hidden="true"></em>
                     </a>
                 </li>
                 <!-- end help button -->
@@ -154,7 +159,8 @@
                         class="nav-link"
                         href="#"
                         id="bd-theme"
-                        aria-label="Toggle color scheme"
+                        aria-label="Light or dark mode"
+                        title="Light or dark mode"
                         data-bs-toggle="dropdown"
                         aria-expanded="false"
                     >
@@ -270,21 +276,18 @@
             <!--begin::Container-->
             <div class="container-fluid">
                 <!--begin::Row-->
-                <div class="row">
-                    <div class="col-sm-6">
-                        <h3 class="mb-0">
-                            <em class="bi {{ $mainTitleIcon }}"></em>
-                            {{ $pageTitle ?? $title ?? '(no title)' }}
-
+                <div class="row align-items-end gy-2">
+                    <div class="col-md-7">
+                        {{-- custom: a real h1 (was an h3), no decorative icon --}}
+                        <h1 class="ff-page-title">
+                            <span>{{ $pageTitle ?? $title ?? '(no title)' }}</span>
                             @if($subTitle ?? false)
-                                <small id="test-box" class="text-xs text-muted">@if(isset($subTitleIcon))
-                                        <em class="bi {{ $subTitleIcon }}"></em>
-                                    @endif{{$subTitle}}</small>
+                                <small id="test-box">{{$subTitle}}</small>
                             @endif
-                        </h3>
+                        </h1>
                     </div>
 
-                    <div class="col-sm-6">
+                    <div class="col-md-5 ff-crumbs">
                         @sectionMissing('breadcrumbs')
                             {{ Breadcrumbs::render() }}
                         @endif
@@ -331,6 +334,24 @@
             @if($FF_IS_BETA)<small class="text-warning"><br>{{ __('firefly.is_beta_warning') }}</small>@endif
         </span>
     </footer>
+    {{-- custom: bottom tab bar on phones and tablets --}}
+    <nav class="ff-tabbar" aria-label="Quick navigation">
+        <a href="{{ route('index') }}" @if('index' === Route::currentRouteName()) aria-current="page" @endif>
+            <em class="bi bi-house" aria-hidden="true"></em><span>Home</span>
+        </a>
+        <a href="{{ route('transactions.index', ['all']) }}" @if(str_starts_with((string) Route::currentRouteName(), 'transactions.')) aria-current="page" @endif>
+            <em class="bi bi-list-ul" aria-hidden="true"></em><span>Transactions</span>
+        </a>
+        <a href="{{ route('transactions.create', ['withdrawal']) }}" class="ff-tab-add" aria-label="Add transaction">
+            <span class="ff-fab"><em class="bi bi-plus-lg" aria-hidden="true"></em></span>
+        </a>
+        <a href="{{ route('budgets.index') }}" @if(str_starts_with((string) Route::currentRouteName(), 'budgets.')) aria-current="page" @endif>
+            <em class="bi bi-pie-chart" aria-hidden="true"></em><span>Budgets</span>
+        </a>
+        <a href="{{ route('subscriptions.index') }}" @if(str_starts_with((string) Route::currentRouteName(), 'subscriptions.')) aria-current="page" @endif>
+            <em class="bi bi-arrow-repeat" aria-hidden="true"></em><span>Subs</span>
+        </a>
+    </nav>
 </div>
 
 {{-- Moment JS  --}}
