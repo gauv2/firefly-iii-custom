@@ -228,7 +228,7 @@
     }
 
     .app-footer {
-        padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+        margin-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
     }
 
     .ff-add {

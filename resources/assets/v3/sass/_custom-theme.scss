@@ -447,6 +447,11 @@ html[data-bs-theme="dark"] .btn-outline-success {
     --bs-btn-hover-border-color: var(--ff-neg-bar);
 }
 
+.btn-primary *,
+.btn-success * {
+    color: inherit !important;
+}
+
 .btn-success {
     --bs-btn-bg: var(--ff-accent);
     --bs-btn-border-color: var(--ff-accent);
@@ -480,8 +485,30 @@ html[data-bs-theme="dark"] .btn-outline-success {
 }
 .form-check-input {
     border-color: var(--ff-field-border);
-    width: 1.125em;
-    height: 1.125em;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-top: 0;
+}
+.form-check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 28px;
+}
+.form-check .form-check-input {
+    float: none;
+    margin-left: 0;
+    flex: none;
+}
+.form-check-label {
+    margin: 0;
+}
+.form-check-inline {
+    display: inline-flex;
+}
+.form-switch .form-check-input {
+    width: 2.5rem;
+    border-radius: 2rem;
 }
 .form-check-input:checked {
     background-color: var(--ff-accent);
@@ -612,6 +639,7 @@ select option {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
+        animation: none !important;
     }
 }
 
