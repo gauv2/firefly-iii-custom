@@ -207,10 +207,17 @@ a.ff-tag:hover {
 }
 
 .ff-tx-budget {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
     font-size: 12px;
     color: var(--ff-text-3);
     text-decoration: none;
     padding-left: 2px;
+}
+
+.ff-tag {
+    min-height: 24px;
 }
 
 .ff-tx-acct {
