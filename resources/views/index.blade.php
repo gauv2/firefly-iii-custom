@@ -1,276 +1,105 @@
 @extends('layout.v3.session')
+{{-- custom: the redesigned Home page. Filled from the API by js/custom/home.js. --}}
+@section('breadcrumbs')
+    <span class="visually-hidden">Home</span>
+@endsection
 @section('content')
-    <!-- TODO internals modal voor pagina settings -->
-    <!-- TODO wizard modal voor weet ik veel -->
-    <x-dashboard.boxes :start="$start" :end="$end"/>
+    <div class="ff-home"
+         id="ff-home"
+         data-url-accounts="{{ route('accounts.index', ['asset']) }}"
+         data-url-account="{{ route('accounts.show', ['__ID__']) }}"
+         data-url-transactions="{{ route('transactions.index', ['all']) }}"
+         data-url-transaction="{{ route('transactions.show', ['__ID__']) }}"
+         data-url-categories="{{ route('categories.index') }}"
+         data-url-budgets="{{ route('budgets.index') }}"
+         data-url-subscriptions="{{ route('subscriptions.index') }}"
+         data-url-piggies="{{ route('piggy-banks.index') }}"
+         data-url-piggy="{{ route('piggy-banks.show', ['__ID__']) }}"
+         data-url-create-piggy="{{ route('piggy-banks.create') }}"
+         data-url-create-budget="{{ route('budgets.create') }}">
 
-    <div class="row" x-data="index">
-        <div class="col-lg-8 col-md-12 col-sm-12">
-            <!--ACCOUNTS -->
-            <div class="card mb-2 card-outline">
-                <div class="card-header">
-                    <div class="card-title"><a href="{{ route('accounts.index',['asset']) }}"
-                                               title="{{ __('firefly.yourAccounts') }}">{{ __('firefly.yourAccounts') }}</a>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div>
-                        <canvas id="accounts-chart" class="wide-chart" height="400" width="100%"></canvas>
-                    </div>
-                </div>
-                <div class="d-print-none card-footer text-end">
-                    <a href="{{ route('accounts.index',['asset']) }}" class="btn btn-primary btn-sm"><span
-                            class="bi bi-cash"></span> {{ __('firefly.go_to_asset_accounts') }}</a>
-                </div>
+        <section class="card ff-summary" aria-label="This period">
+            <div class="ff-stat ff-stat-main">
+                <span class="ff-stat-label">Net worth</span>
+                <span class="ff-stat-value ff-big" data-fill="net-worth"><span class="ff-skel"></span></span>
+                <span class="ff-delta" data-fill="net-worth-delta" hidden></span>
             </div>
-
-            <!--BUDGETS -->
-            <div class="card mb-2 card-outline">
-                <div class="card-header ">
-                    <div class="card-title"><a href="{{ route('budgets.index') }}"
-                                               title="{{ __('firefly.budgetsAndSpending') }}">{{ __('firefly.budgetsAndSpending') }}</a>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div>
-                        <canvas id="budgets-chart" class="wide-chart" height="400" width="100%"></canvas>
-                    </div>
-                    <!--
-                    <div>
-                        <canvas id="budgets-two-chart" class="wide-chart" height="400" width="100%"></canvas>
-                    </div>
-                    -->
-                </div>
-                <div class="card-footer text-end d-print-none">
-                    <a href="{{ route('budgets.index') }}" class="btn btn-primary btn-sm">
-                        <span class="bi bi-pie-chart"></span>
-                        <span>{{ __('firefly.go_to_budgets') }}</span>
-                    </a>
-                </div>
+            <div class="ff-stat">
+                <span class="ff-stat-label">Money in</span>
+                <span class="ff-stat-value ff-pos" data-fill="earned"><span class="ff-skel"></span></span>
+                <span class="ff-stat-sub" data-fill="earned-sub"></span>
             </div>
-            <!--CATEGORIES -->
-            <div class="card mb-2 card-outline">
-                <div class="card-header">
-                    <div class="card-title"><a href="{{ route('categories.index') }}"
-                                               title="{{ __('firefly.categories') }}">{{ __('firefly.categories') }}</a>
-                    </div>
-
-                </div>
-                <div class="card-body">
-                    <canvas id="categories-chart" class="wide-chart" height="400" width="100%"></canvas>
-                </div>
-                <div class="card-footer text-end d-print-none">
-                    <a href="{{ route('categories.index') }}" class="btn btn-primary btn-sm">
-                        <span class="bi bi-bookmark"></span>
-                        <span>{{ __('firefly.go_to_categories') }}</span>
-                    </a>
-                </div>
+            <div class="ff-stat">
+                <span class="ff-stat-label">Money out</span>
+                <span class="ff-stat-value" data-fill="spent"><span class="ff-skel"></span></span>
+                <span class="ff-stat-sub" data-fill="spent-sub"></span>
             </div>
-        </div>
-        <div class="col-lg-4 col-md-12 col-sm-12" id="all_transactions">
-            <!--TRANSACTIONS -->
-            @foreach($transactions as $data)
-                <div class="card card-outline mb-2">
-                    <div class="card-header">
-                        <div class="card-title"><a
-                                href="{{ route('accounts.show', [$data['account']->id]) }}">{{ $data['account']->name }}</a>
-                        </div>
-                    </div>
-                    @if(count($data['transactions']) > 0)
-                        <div class="card-body p-0">
-                            <x-lists.groups-tiny :account="$data['account']" :transactions="$data['transactions']"/>
-                        </div>
-                    @endif
-                    @if(0 === count($data['transactions']))
-                        <div class="card-body">
-                            <p>
-                                <em>
-                                    {{ __('firefly.no_transactions_account', ['name' => $data['account']['name']]) }}
-                                </em>
-                            </p>
-
-                        </div>
-                    @endif
-                    <div class="card-footer d-print-none">
-                        <div class="row">
-                            <div class="col-6">
-                                <button type="button" class="btn btn-primary btn-sm dropdown-toggle"
-                                        data-bs-toggle="dropdown"
-                                        aria-expanded="false">{{ __('firefly.sidebar_frontpage_create') }}</button>
-                                <ul class="dropdown-menu">
-                                    <li>
-                                        <a class="dropdown-item"
-                                           href="{{ route('transactions.create', ['withdrawal']) }}?source={{ $data['account']['id'] }}">{{ __('firefly.create_new_withdrawal') }}</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item"
-                                           href="{{ route('transactions.create', ['deposit']) }}?destination={{ $data['account']['id'] }}">{{ __('firefly.create_new_deposit') }}</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item"
-                                           href="{{ route('transactions.create', ['transfer']) }}?source={{ $data['account']['id'] }}">{{ __('firefly.create_new_transfer') }}</a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="col-6 text-end">
-                                <button type="button" class="btn btn-primary btn-sm dropdown-toggle"
-                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                    {{ account_balance($data['account']) }}
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li>
-                                        <a class="dropdown-item"
-                                           href="{{ route('accounts.show', [$data['account']['id']]) }}">{{ __('firefly.show') }}</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item"
-                                           href="{{ route('accounts.reconcile', [$data['account']['id']]) }}">{{ __('firefly.reconcile') }}</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item"
-                                           href="{{ route('accounts.edit', [$data['account']['id']]) }}?_from={{ urlencode($FF3_FROM) }}">{{ __('firefly.edit') }}</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item"
-                                           href="{{ route('accounts.delete', [$data['account']['id']]) }}">{{ __('firefly.delete') }}</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @endforeach
-
-            @if($billCount > 0)
-                <!--BILLS -->
-                <div class="card mb-2">
-                    <div class="card-header">
-                        <div class="card-title"><a href="{{ route('subscriptions.index') }}"
-                                                   title="{{ __('firefly.bills') }}">{{ __('firefly.bills') }}</a></div>
-
-                    </div>
-                    <div class="card-body">
-                        <div class="center-chart">
-                            <canvas id="bills-chart" class="low-chart" height="200"></canvas>
-                        </div>
-                    </div>
-                    <div class="card-footer text-end d-print-none">
-                        <a href="{{ route('bills.index') }}" class="btn  btn-primary btn-sm"><span
-                                class="bi bi-calendar"></span> {{ __('firefly.go_to_bills') }}</a>
-                    </div>
-                </div>
-            @endif
-
-            <!--box for piggy bank data (JSON) -->
-            <div id="piggy_bank_overview">
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <div class="card-title"><a href="{{ route('piggy-banks.index') }}"
-                                                   title="{{ __('firefly.go_to_piggies') }}">{{ __('firefly.piggyBanks') }}</a>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <template x-if="loadingPiggyBanks">
-                            <div class="text-center">
-                                <div class="spinner-border spinner-border-sm" role="status">
-                                    <span class="visually-hidden">{{ __('firefly.thinking') }}</span>
-                                </div>
-                            </div>
-                        </template>
-                        <template x-if="!loadingPiggyBanks && piggyBanks.length === 0">
-                            <p><em>{{ __('firefly.no_piggies_intro_default') }}</em></p>
-                        </template>
-                        <template x-for="piggyBank in piggyBanks" :key="piggyBank.id">
-                            <div>
-                                <a :href="'./piggy-banks/show/' + piggyBank.id" :title="piggyBank.name"><strong
-                                        x-text="piggyBank.name"></strong></a><br>
-                                <div class="progress">
-                                    <div class="progress-bar progress-bar-striped" role="progressbar"
-                                         :class="'w-'+piggyBank.percentage" :aria-valuenow="piggyBank.percentage"
-                                         aria-valuemin="0" aria-valuemax="100">
-                                        <template x-if="piggyBank.percentage > 50">
-                                            <span x-text="piggyBank.amount"></span>
-                                        </template>
-                                    </div>
-                                    <template x-if="piggyBank.percentage <= 50">
-                                        <span>&nbsp;
-                                            <span class="ml-1" x-text="piggyBank.amount"></span>
-                                        </span>
-                                    </template>
-                                </div>
-                            </div>
-                        </template>
-                    </div>
-                    <div class="card-footer text-end d-print-none">
-                        <a href="{{ route('piggy-banks.index') }}" title="{{ __('firefly.go_to_piggies') }}"
-                           class="btn btn-primary btn-sm"><span
-                                class="bi bi-bullseye"></span> {{ __('firefly.go_to_piggies') }}</a>
-                    </div>
-                </div>
+            <div class="ff-stat">
+                <span class="ff-stat-label">Budget left</span>
+                <span class="ff-stat-value" data-fill="left"><span class="ff-skel"></span></span>
+                <span class="ff-stat-sub" data-fill="left-sub"></span>
             </div>
+        </section>
+
+        <div class="ff-grid">
+            <section class="card ff-span-8" aria-labelledby="ff-h-balance">
+                <div class="ff-card-h">
+                    <h2 id="ff-h-balance">Balance</h2>
+                    <span class="ff-card-note" data-fill="balance-note">Your accounts · daily</span>
+                </div>
+                <div class="ff-card-b ff-chart" data-fill="balance-chart"><div class="ff-skel ff-skel-chart"></div></div>
+            </section>
+
+            <section class="card ff-span-4" aria-labelledby="ff-h-accounts">
+                <div class="ff-card-h">
+                    <h2 id="ff-h-accounts">Accounts</h2>
+                    <a class="ff-card-link" href="{{ route('accounts.index', ['asset']) }}">All</a>
+                </div>
+                <div class="ff-card-b ff-rows" data-fill="accounts"><div class="ff-skel ff-skel-rows"></div></div>
+            </section>
+
+            <section class="card ff-span-7" aria-labelledby="ff-h-categories">
+                <div class="ff-card-h">
+                    <h2 id="ff-h-categories">Where the money went</h2>
+                    <a class="ff-card-link" href="{{ route('categories.index') }}">Categories</a>
+                </div>
+                <div class="ff-card-b" data-fill="categories"><div class="ff-skel ff-skel-rows"></div></div>
+            </section>
+
+            <section class="card ff-span-5" aria-labelledby="ff-h-budgets">
+                <div class="ff-card-h">
+                    <h2 id="ff-h-budgets">Budgets</h2>
+                    <a class="ff-card-link" href="{{ route('budgets.index') }}">Manage</a>
+                </div>
+                <div class="ff-card-b" data-fill="budgets"><div class="ff-skel ff-skel-rows"></div></div>
+            </section>
+
+            <section class="card ff-span-5" aria-labelledby="ff-h-upcoming">
+                <div class="ff-card-h">
+                    <h2 id="ff-h-upcoming">Coming up</h2>
+                    <a class="ff-card-link" href="{{ route('subscriptions.index') }}">Subscriptions</a>
+                </div>
+                <div class="ff-card-b ff-rows" data-fill="upcoming"><div class="ff-skel ff-skel-rows"></div></div>
+            </section>
+
+            <section class="card ff-span-7" aria-labelledby="ff-h-recent">
+                <div class="ff-card-h">
+                    <h2 id="ff-h-recent">Recent activity</h2>
+                    <a class="ff-card-link" href="{{ route('transactions.index', ['all']) }}">All transactions</a>
+                </div>
+                <div class="ff-card-b ff-rows" data-fill="recent"><div class="ff-skel ff-skel-rows"></div></div>
+            </section>
+
+            <section class="card ff-span-12" aria-labelledby="ff-h-goals">
+                <div class="ff-card-h">
+                    <h2 id="ff-h-goals">Savings goals</h2>
+                    <a class="ff-card-link" href="{{ route('piggy-banks.index') }}">All goals</a>
+                </div>
+                <div class="ff-card-b ff-goals" data-fill="goals"><div class="ff-skel ff-skel-rows"></div></div>
+            </section>
         </div>
     </div>
-    <div class="row">
-        <div class="col-lg-12 col-md-12 col-sm-12">
-            <!--EXPENSE ACCOUNTS -->
-            <div class="card mb-2">
-                <div class="card-header">
-                    <div class="card-title"><a href="{{ route('accounts.index',['expense']) }}"
-                                               title="{{ __('firefly.expense_accounts') }}">{{ __('firefly.expense_accounts') }}</a>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <canvas id="expense-accounts-chart" class="wide-chart" height="400"
-                            width="100%"></canvas>
-                </div>
-                <div class="card-footer text-end d-print-none">
-                    <a href="{{ route('accounts.index', ['expense']) }}" class="btn btn-primary btn-sm"><span
-                            class="bi bi-cart"></span> {{ __('firefly.go_to_expense_accounts') }}</a>
-                </div>
-            </div>
-            <!--OPTIONAL REVENUE ACCOUNTS -->
-            <div class="card mb-2">
-                <div class="card-header">
-                    <div class="card-title"><a href="{{ route('accounts.index',['revenue']) }}"
-                                               title="{{ __('firefly.revenue_accounts') }}">{{ __('firefly.revenue_accounts') }}</a>
-                    </div>
-
-                </div>
-                <div class="card-body">
-                    <canvas id="revenue-accounts-chart" class="wide-chart" height="400"
-                            width="100%"></canvas>
-                </div>
-                <div class="card-footer text-end d-print-none">
-                    <a href="{{ route('accounts.index', ['revenue']) }}" class="btn btn-primary btn-sm"><span
-                            class="bi bi-box-arrow-down"></span> {{ __('firefly.go_to_revenue_accounts') }}</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
 @endsection
 @section('scripts')
-    @vite(['js/pages/dashboard/dashboard.js'])
-
-     <script nonce="{{ $JS_NONCE }}">
-        var lineColor = 'red';
-        var lineTextColor = '#000';
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            lineColor = '#a00';
-            lineTextColor = '#bec5cb';
-        }
-        var billCount = {{ $billCount }};
-        var accountRevenueUrl = '{{ route('chart.account.revenue') }}';
-        var accountExpenseUrl = '{{ route('chart.account.expense') }}';
-    </script>
-
-     <script src="v1/js/lib/Chart.bundle.min.js?v={{ $FF_BUILD_TIME }}"
-            nonce="{{ $JS_NONCE }}"></script>
-     <script src="v1/js/lib/chartjs-plugin-annotation.min.js?v={{ $FF_BUILD_TIME }}"
-            nonce="{{ $JS_NONCE }}"></script>
-     <script src="v1/js/ff/charts.defaults.js?v={{ $FF_BUILD_TIME }}"
-            nonce="{{ $JS_NONCE }}"></script>
-     <script src="v1/js/ff/charts.js?v={{ $FF_BUILD_TIME }}" nonce="{{ $JS_NONCE }}"></script>
-     <script src="v1/js/ff/index.js?v={{ $FF_BUILD_TIME }}" nonce="{{ $JS_NONCE }}"></script>
-
+    @vite(['js/custom/home.js'])
 @endsection

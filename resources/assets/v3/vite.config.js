@@ -40,6 +40,10 @@ export default defineConfig(({ command }) => {
                     // CSS for entire app
                     "sass/app.scss",
 
+                    // custom: Firefly III Custom redesign
+                    "js/custom/shell.js",
+                    "js/custom/home.js",
+
                     // dashboard
                     "js/pages/dashboard/boxes.js",
                     "js/pages/dashboard/dashboard.js",

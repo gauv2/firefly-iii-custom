@@ -1,0 +1,491 @@
+/*
+ * _custom-home.scss
+ * Firefly III Custom: the redesigned Home page (index.blade.php + js/custom/home.js).
+ */
+
+.ff-home {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-bottom: 8px;
+}
+
+.ff-pos {
+    color: var(--ff-pos) !important;
+}
+
+.ff-neg {
+    color: var(--ff-neg) !important;
+}
+
+// summary strip
+.ff-summary {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1.3fr) repeat(3, minmax(0, 1fr));
+    flex-direction: row;
+}
+
+.ff-stat {
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.ff-stat + .ff-stat {
+    border-left: 1px solid var(--ff-border);
+}
+
+.ff-stat-label {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--ff-text-2);
+}
+
+.ff-stat-value {
+    font-size: 22px;
+    font-weight: 650;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ff-stat-value.ff-big {
+    font-size: 30px;
+}
+
+.ff-stat-sub {
+    font-size: 12.5px;
+    color: var(--ff-text-2);
+    min-height: 1.2em;
+}
+
+.ff-delta {
+    align-self: flex-start;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 3px 7px;
+    border-radius: 6px;
+    background: var(--ff-pos-soft);
+    color: var(--ff-pos);
+}
+
+.ff-delta.ff-delta-neg {
+    background: var(--ff-surface-sunken);
+    color: var(--ff-text-2);
+}
+
+// grid of cards
+.ff-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.ff-span-12 { grid-column: span 12; }
+.ff-span-8 { grid-column: span 8; }
+.ff-span-7 { grid-column: span 7; }
+.ff-span-5 { grid-column: span 5; }
+.ff-span-4 { grid-column: span 4; }
+
+.ff-home .card {
+    margin: 0;
+    min-width: 0;
+}
+
+.ff-card-h {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 14px 16px 6px;
+}
+
+.ff-card-h h2 {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.ff-card-link {
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    padding: 4px 6px;
+    border-radius: 6px;
+}
+
+.ff-card-link:hover {
+    background: var(--ff-accent-soft);
+}
+
+.ff-card-note {
+    font-size: 12.5px;
+    color: var(--ff-text-3);
+}
+
+.ff-card-b {
+    padding: 6px 16px 16px;
+}
+
+.ff-empty {
+    color: var(--ff-text-2);
+    margin: 6px 0 0;
+}
+
+// rows
+.ff-rows {
+    display: flex;
+    flex-direction: column;
+}
+
+.ff-row {
+    display: grid;
+    grid-template-columns: 32px minmax(0, 1fr) auto;
+    gap: 10px;
+    align-items: center;
+    min-height: 50px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--ff-border);
+    color: inherit;
+    text-decoration: none;
+}
+
+.ff-row:last-child {
+    border-bottom: 0;
+}
+
+a.ff-row:hover .ff-row-t b {
+    color: var(--ff-accent-text);
+}
+
+.ff-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    font-size: 12.5px;
+    font-weight: 600;
+    background: var(--ff-surface-sunken);
+    color: var(--ff-text-2);
+}
+
+.ff-row-t {
+    min-width: 0;
+}
+
+.ff-row-t b,
+.ff-row-t span {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ff-row-t b {
+    font-weight: 550;
+    font-size: 14px;
+}
+
+.ff-row-t span {
+    font-size: 12.5px;
+    color: var(--ff-text-2);
+}
+
+.ff-row-amt {
+    text-align: right;
+    font-weight: 550;
+    white-space: nowrap;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+}
+
+.ff-more {
+    font-size: 13px;
+    padding-top: 8px;
+    text-decoration: none;
+}
+
+// bars
+.ff-bar {
+    display: flex;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--ff-surface-sunken);
+    overflow: hidden;
+}
+
+.ff-bar i {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+    background: var(--ff-accent);
+}
+
+.ff-bar i.ff-near {
+    background: var(--ff-warn-bar);
+}
+
+.ff-bar i.ff-over {
+    background: var(--ff-neg-bar);
+}
+
+.ff-cat {
+    display: grid;
+    grid-template-columns: minmax(0, 140px) minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 0;
+    font-size: 13.5px;
+}
+
+.ff-cat-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--ff-text-2);
+}
+
+.ff-cat .ff-bar {
+    height: 10px;
+    border-radius: 4px;
+    background: transparent;
+}
+
+.ff-cat .ff-bar i {
+    border-radius: 4px;
+}
+
+.ff-cat-amt {
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+// budgets
+.ff-budget {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--ff-border);
+}
+
+.ff-budget:last-child {
+    border-bottom: 0;
+}
+
+.ff-budget-l {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    font-size: 13.5px;
+}
+
+.ff-budget-l b {
+    font-weight: 550;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ff-budget-s {
+    font-size: 12.5px;
+    color: var(--ff-text-2);
+}
+
+.ff-status {
+    font-size: 11.5px;
+    font-weight: 500;
+    line-height: 1;
+    padding: 4px 7px;
+    border-radius: 5px;
+    white-space: nowrap;
+}
+
+.ff-status-over {
+    background: var(--ff-neg-soft);
+    color: var(--ff-neg);
+}
+
+.ff-status-ok {
+    background: var(--ff-pos-soft);
+    color: var(--ff-pos);
+}
+
+.ff-status-soon {
+    background: var(--ff-warn-soft);
+    color: var(--ff-warn);
+}
+
+// chart
+.ff-chart svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+}
+
+.ff-chart text {
+    fill: var(--ff-text-3);
+    font-size: 11px;
+    font-family: var(--bs-body-font-family);
+    font-variant-numeric: tabular-nums;
+}
+
+.ff-chart .ff-grid-line {
+    stroke: var(--ff-chart-grid);
+}
+
+.ff-chart .ff-area {
+    fill: var(--ff-chart-fill);
+}
+
+.ff-chart .ff-line {
+    fill: none;
+    stroke: var(--ff-chart-line);
+    stroke-width: 2.2;
+    stroke-linejoin: round;
+}
+
+.ff-chart .ff-dot {
+    fill: var(--ff-chart-line);
+    stroke: var(--ff-surface-raised);
+    stroke-width: 2;
+}
+
+// goals
+.ff-goals {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+    gap: 12px 24px;
+}
+
+.ff-goal {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: inherit;
+    text-decoration: none;
+    min-width: 0;
+}
+
+.ff-goal > span {
+    min-width: 0;
+}
+
+.ff-goal b {
+    display: block;
+    font-weight: 600;
+}
+
+.ff-goal span span {
+    display: block;
+    font-size: 13px;
+    color: var(--ff-text-2);
+}
+
+.ff-ring {
+    flex: none;
+}
+
+.ff-ring-track,
+.ff-ring-fill {
+    fill: none;
+    stroke-width: 6;
+}
+
+.ff-ring-track {
+    stroke: var(--ff-surface-sunken);
+}
+
+.ff-ring-fill {
+    stroke: var(--ff-accent);
+    stroke-linecap: round;
+}
+
+.ff-ring text {
+    fill: var(--ff-text-1);
+    font: 600 12.5px var(--bs-body-font-family);
+}
+
+// loading placeholders
+.ff-skel {
+    display: inline-block;
+    width: 7em;
+    height: 0.9em;
+    border-radius: 6px;
+    background: var(--ff-surface-sunken);
+}
+
+.ff-skel-chart {
+    display: block;
+    width: 100%;
+    height: 180px;
+}
+
+.ff-skel-rows {
+    display: block;
+    width: 100%;
+    height: 140px;
+}
+
+.ff-hidden-amount {
+    letter-spacing: 0.1em;
+    color: var(--ff-text-3);
+}
+
+// narrow screens
+@media (max-width: 1199.98px) {
+    .ff-span-8,
+    .ff-span-4,
+    .ff-span-7,
+    .ff-span-5 {
+        grid-column: span 12;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1199.98px) {
+    .ff-span-7,
+    .ff-span-5 {
+        grid-column: span 6;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .ff-grid {
+        gap: 12px;
+    }
+
+    .ff-summary {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+
+    .ff-summary .ff-stat-main {
+        grid-column: 1 / -1;
+        border-bottom: 1px solid var(--ff-border);
+    }
+
+    .ff-summary .ff-stat + .ff-stat {
+        border-left: 0;
+    }
+
+    .ff-summary .ff-stat:nth-child(3) {
+        border-left: 1px solid var(--ff-border);
+    }
+
+    .ff-summary .ff-stat:nth-child(4) {
+        grid-column: 1 / -1;
+        border-top: 1px solid var(--ff-border);
+    }
+
+    .ff-cat {
+        grid-template-columns: minmax(0, 100px) minmax(0, 1fr) auto;
+        gap: 8px;
+    }
+}
