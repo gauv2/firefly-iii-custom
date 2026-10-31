@@ -50,27 +50,6 @@
                 @endforeach
             </section>
         @endif
-                        @endforeach
-                        @if(!$shown)—@endif
-                    </span>
-                    <span class="ff-stat-sub">This period</span>
-                </div>
-                <div class="ff-stat">
-                    <span class="ff-stat-label">Money in</span>
-                    <span class="ff-stat-value ff-pos">
-                        @php $shown = false; @endphp
-                        @foreach(($current['earned'] ?? []) as $entry)
-                            @if(is_array($entry) && 0 !== $entry['amount'])
-                                @php $shown = true; @endphp
-                                {!! format_amount_by_symbol(abs((float) $entry['amount']), $entry['currency_symbol'], $entry['currency_decimal_places'], false) !!}
-                            @endif
-                        @endforeach
-                        @if(!$shown)—@endif
-                    </span>
-                    <span class="ff-stat-sub">This period</span>
-                </div>
-            </section>
-        @endif
 
         <section class="card ff-txcard" aria-label="{{ $subTitle }}">
             <x-lists.groups-day :groups="$groups" :account="null" />
