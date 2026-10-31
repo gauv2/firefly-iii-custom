@@ -488,6 +488,13 @@ html[data-bs-theme="dark"] .btn-outline-success {
     border-color: var(--ff-accent);
 }
 
+// disabled options stay readable (Bootstrap fades them to 50%)
+.form-check-input:disabled ~ .form-check-label,
+.form-check-input[disabled] ~ .form-check-label {
+    opacity: 1;
+    color: var(--ff-text-3);
+}
+
 select option {
     background-color: var(--ff-surface-raised);
     color: var(--ff-text-1);
@@ -607,6 +614,7 @@ select option {
         transition-duration: 0.01ms !important;
     }
 }
+
 
 @import "custom-shell";
 @import "custom-home";
