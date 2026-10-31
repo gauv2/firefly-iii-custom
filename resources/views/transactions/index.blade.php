@@ -24,21 +24,32 @@
         </div>
 
         @if(null !== $current)
-            <section class="card ff-summary ff-summary-3" aria-label="{{ $current['title'] }}">
+            @php
+                // Firefly only totals the type this list shows: spent, earned or transferred.
+                $totals = [];
+                foreach (['spent' => 'Money out', 'earned' => 'Money in', 'transferred' => 'Transferred'] as $key => $label) {
+                    foreach (($current[$key] ?? []) as $entry) {
+                        if (is_array($entry) && array_key_exists('amount', $entry) && 0.0 !== (float) $entry['amount']) {
+                            $totals[] = ['label' => $label, 'key' => $key, 'entry' => $entry];
+                        }
+                    }
+                }
+            @endphp
+            <section class="card ff-summary ff-summary-n" style="--ff-cols: {{ 1 + count($totals) }}" aria-label="{{ $current['title'] }}">
                 <div class="ff-stat">
                     <span class="ff-stat-label">{{ $current['title'] }}</span>
                     <span class="ff-stat-value">{{ $current['total_transactions'] }}</span>
                     <span class="ff-stat-sub">{{ 1 === $current['total_transactions'] ? 'transaction' : 'transactions' }}</span>
                 </div>
-                <div class="ff-stat">
-                    <span class="ff-stat-label">Money out</span>
-                    <span class="ff-stat-value">
-                        @php $shown = false; @endphp
-                        @foreach(($current['spent'] ?? []) as $spent)
-                            @if(is_array($spent) && 0 !== $spent['amount'])
-                                @php $shown = true; @endphp
-                                {!! format_amount_by_symbol(abs((float) $spent['amount']), $spent['currency_symbol'], $spent['currency_decimal_places'], false) !!}
-                            @endif
+                @foreach($totals as $total)
+                    <div class="ff-stat">
+                        <span class="ff-stat-label">{{ $total['label'] }}</span>
+                        <span class="ff-stat-value @if('earned' === $total['key']) ff-pos @endif">{!! format_amount_by_symbol(abs((float) $total['entry']['amount']), $total['entry']['currency_symbol'], $total['entry']['currency_decimal_places'], false) !!}</span>
+                        <span class="ff-stat-sub">This period</span>
+                    </div>
+                @endforeach
+            </section>
+        @endif
                         @endforeach
                         @if(!$shown)—@endif
                     </span>

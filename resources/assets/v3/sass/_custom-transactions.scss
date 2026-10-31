@@ -9,8 +9,8 @@
     gap: 16px;
 }
 
-.ff-summary-3 {
-    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+.ff-summary-n {
+    grid-template-columns: repeat(var(--ff-cols, 2), minmax(0, 1fr)) !important;
 }
 
 // toolbar and chips
@@ -284,17 +284,8 @@ a.ff-tag:hover {
         padding-left: 28px;
     }
 
-    .ff-summary-3 {
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
-    }
-
-    .ff-summary-3 .ff-stat:first-child {
-        grid-column: 1 / -1;
-        border-bottom: 1px solid var(--ff-border);
-    }
-
-    .ff-summary-3 .ff-stat:nth-child(2) {
-        border-left: 0;
+    .ff-summary-n .ff-stat:nth-child(2) {
+        border-left: 1px solid var(--ff-border);
     }
 }
 
@@ -310,6 +301,11 @@ a.ff-tag:hover {
     }
 
     .ff-select-all {
+        display: none;
+    }
+
+    // nothing to show in the bar on phones unless there are pages or a selection
+    .ff-txlist-bar:not(:has(.pagination)):not(:has(.action-menu:not(.d-none))) {
         display: none;
     }
 }
