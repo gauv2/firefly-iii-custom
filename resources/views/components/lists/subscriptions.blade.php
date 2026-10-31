@@ -7,7 +7,7 @@
                                                   :route="route('subscriptions.create')"
                                                   :linkTitle="__('firefly.create_new_bill')"/>
                 <div class="card-body p-0">
-                    <table class="table table-valign-middle table-hover table-sm" id="bill-sortable">
+                    <table class="table table-valign-middle table-hover ff-sub-table" id="bill-sortable">
                         <thead>
                         <tr>
                             <th class="w-5">&nbsp;</th>
@@ -26,11 +26,11 @@
                                 <tr class="bill-sortable" data-id="{{ $entry['id'] }}" data-name="{{ $entry['name'] }}"
                                     data-order="{{ $entry['order'] }}" data-position="{{ $loop->index }}">
                                     <td>
-                                        <a class="btn btn-sm btn-outline-secondary bi bi-list bill-handle"></a>
+                                        <a class="btn btn-sm btn-outline-secondary bi bi-grip-vertical bill-handle" aria-label="Drag to reorder {{ $entry['name'] }}" title="Drag to reorder"></a>
                                     </td>
                                     <td>
                                         @if(!$entry['active'])
-                                            <span class="bi bi-ban"></span>
+                                            <span class="ff-status ff-status-muted">Inactive</span>
                                         @endif
                                         <a href="{{ route('subscriptions.show',$entry['id']) }}"
                                            title="{{ $entry['name'] }}">{{ $entry['name'] }}</a>
@@ -77,7 +77,7 @@
                                     <td class="text-end">
                 <span class="mr-2"
                       title="{{ e(format_amount_by_symbol($entry['amount_min'], $entry['currency_symbol'], $entry['currency_decimal_places'], false)) }} -- {{ e(format_amount_by_symbol($entry['amount_max'], $entry['currency_symbol'], $entry['currency_decimal_places'], false)) }}">
-                    ~ {!! format_amount_by_symbol(($entry['amount_max'] + $entry['amount_min'])/2, $entry['currency_symbol'], $entry['currency_decimal_places'])  !!}
+                    @if((float) $entry['amount_max'] !== (float) $entry['amount_min'])~ @endif{!! format_amount_by_symbol(($entry['amount_max'] + $entry['amount_min'])/2, $entry['currency_symbol'], $entry['currency_decimal_places'], false)  !!}
 
                     @if('0' !== $entry['pc_amount_max'] && null !== $entry['pc_amount_max'])
                         (~ {!! format_amount_by_symbol(($entry['pc_amount_max'] + $entry['pc_amount_min'])/2, $primaryCurrency->symbol, $primaryCurrency->decimal_places) !!}
@@ -115,8 +115,8 @@
                                                 {{ $entry['next_expected_match_diff'] }}
                                             </td>
                                         @else
-                                            <td class="paid_in_period text-warning">
-                                                {{ $entry['next_expected_match_diff'] }}
+                                            <td class="paid_in_period">
+                                                <span class="ff-status ff-status-soon">{{ $entry['next_expected_match_diff'] }}</span>
                                                 <!-- {{ __('firefly.bill_expected_date', ['date' => $entry['next_expected_match_diff']]) }} -->
                                             </td>
                                         @endif
@@ -134,9 +134,9 @@
                                     --}}
 
                                     @if(count($entry['paid_dates']) > 0 && $entry['active'])
-                                        <td class="paid_in_period text-success">
+                                        <td class="paid_in_period">
                                             @foreach($entry['paid_dates'] as $currentPaid)
-                                                <a href="{{ route('transactions.show', $currentPaid['transaction_group_id']) }}">{{ carbonize($currentPaid['date'])->isoFormat($monthAndDayFormat) }}</a>
+                                                <span class="ff-status ff-status-ok">Paid</span> <a href="{{ route('transactions.show', $currentPaid['transaction_group_id']) }}">{{ carbonize($currentPaid['date'])->isoFormat($monthAndDayFormat) }}</a>
                                                 <br/>
                                             @endforeach
                                         </td>
@@ -168,8 +168,8 @@
                                     </td>
                                     <td class="text-end">
                                         <div class="dropdown">
-                                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                {{ __('firefly.actions') }}
+                                            <button class="ff-icon-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Actions for {{ $entry['name'] }}">
+                                                <em class="bi bi-three-dots" aria-hidden="true"></em>
                                             </button>
                                             <ul class="dropdown-menu">
                                                 <li><a class="dropdown-item" href="{{ route('subscriptions.edit',$entry['id']) }}?_from={{ urlencode($FF3_FROM) }}"><span class="bi bi-pencil"></span> {{ __('firefly.edit') }}</a></li>

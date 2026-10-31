@@ -1,0 +1,132 @@
+/*
+ * _custom-lists.scss
+ * Firefly III Custom: budgets, subscriptions and savings goals (enhanced in place; their
+ * upstream scripts for editing, sorting and moving money keep working).
+ */
+
+.ff-status-muted {
+    background: var(--ff-surface-sunken);
+    color: var(--ff-text-2);
+}
+
+.ff-bar i.ff-done {
+    background: var(--ff-pos);
+}
+
+// budgets
+.ff-budget-table td:nth-child(2) {
+    min-width: 200px;
+}
+
+.ff-budget-table td:nth-child(2) > a {
+    font-weight: 600;
+    color: var(--ff-text-1);
+    text-decoration: none;
+}
+
+.ff-budget-table td:nth-child(2) > a:hover {
+    color: var(--ff-accent-text);
+}
+
+.ff-budget-meter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+    max-width: 340px;
+}
+
+.ff-budget-meter .ff-bar {
+    flex: 1;
+    min-width: 80px;
+}
+
+.ff-budget-table .input-group {
+    max-width: 260px;
+    flex-wrap: nowrap;
+}
+
+.ff-budget-table .spent,
+.ff-budget-table .left {
+    white-space: nowrap;
+    font-size: 13px;
+}
+
+// the budget period navigator's big button group
+.btn-secondary {
+    --bs-btn-color: var(--ff-text-1);
+    --bs-btn-bg: var(--ff-surface-raised);
+    --bs-btn-border-color: var(--ff-border-strong);
+    --bs-btn-hover-color: var(--ff-text-1);
+    --bs-btn-hover-bg: var(--ff-surface-sunken);
+    --bs-btn-hover-border-color: var(--ff-border-strong);
+    --bs-btn-active-color: var(--ff-accent-text);
+    --bs-btn-active-bg: var(--ff-accent-soft);
+    --bs-btn-active-border-color: var(--ff-border-strong);
+}
+
+// progress-stacked bars on the budgets page (available vs budgeted, budgeted vs spent)
+.progress-stacked {
+    --bs-progress-height: 8px;
+    --bs-progress-border-radius: 999px;
+    background: var(--ff-surface-sunken);
+    gap: 2px;
+}
+
+// savings goals
+.ff-goal-meter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 160px;
+}
+
+.ff-goal-meter .ff-bar {
+    flex: 1;
+}
+
+.ff-goal-meter span {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--ff-text-2);
+    min-width: 3.2em;
+    text-align: right;
+}
+
+.ff-goal-table td:nth-child(3) a,
+.ff-sub-table td:nth-child(2) > a {
+    font-weight: 600;
+    color: var(--ff-text-1);
+    text-decoration: none;
+}
+
+.ff-goal-table td:nth-child(3) a:hover,
+.ff-sub-table td:nth-child(2) > a:hover {
+    color: var(--ff-accent-text);
+}
+
+// subscriptions
+.ff-sub-table .paid_in_period,
+.ff-sub-table .expected_in_period {
+    white-space: nowrap;
+    font-size: 13px;
+}
+
+.ff-sub-table .paid_in_period .ff-status {
+    margin-right: 4px;
+}
+
+.bill-handle,
+.piggy-handle,
+.object-handle {
+    color: var(--ff-text-3) !important;
+    border-color: transparent !important;
+    background: none !important;
+}
+
+.bill-handle:hover,
+.piggy-handle:hover,
+.object-handle:hover {
+    color: var(--ff-text-1) !important;
+    background: var(--ff-surface-sunken) !important;
+}

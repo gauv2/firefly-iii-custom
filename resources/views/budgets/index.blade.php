@@ -191,7 +191,7 @@
                 <div class="card mb-2">
                     <x-elements.card-header-with-menu :cardTitle="__('firefly.budgets')" :route="route('budgets.create')" :linkTitle="__('firefly.createBudget')" />
                     <div class="card-body p-0">
-                        <table class="table sortable-table table-striped sortable table-sm" id="budgetList">
+                        <table class="table sortable-table sortable ff-budget-table" id="budgetList">
                             <thead>
                             <tr>
                                 <th class="ten">&nbsp;</th>
@@ -208,7 +208,7 @@
                             @foreach($budgets as $budget)
                                 <tr data-id="{{ $budget['id'] }}">
                                     <td>
-                                        <a href="#" class="handle object-handle btn btn-outline-secondary btn-sm"><span class="bi bi-list"></span></a>
+                                        <a href="#" class="handle object-handle btn btn-outline-secondary btn-sm" aria-label="Drag to reorder {{ $budget['name'] }}" title="Drag to reorder"><span class="bi bi-grip-vertical" aria-hidden="true"></span></a>
                                     </td>
                                     <td>
                                         @if(0 === count($budget['budgeted']))
@@ -239,6 +239,24 @@
                                         @if(count($budget['attachments']) > 0)
                                             <span class="bi bi-paperclip"></span>
                                         @endif
+                                        {{-- custom: how much of each budgeted amount is used --}}
+                                        @foreach($budget['budgeted'] as $budgetLimit)
+                                            @php
+                                                $ffLimit = (float) $budgetLimit['amount'];
+                                                $ffSpent = abs((float) $budgetLimit['spent']);
+                                                $ffPct = $ffLimit > 0 ? $ffSpent / $ffLimit : 0;
+                                            @endphp
+                                            @if($ffLimit > 0 && $budgetLimit['in_range'])
+                                                <div class="ff-budget-meter">
+                                                    <div class="ff-bar" role="img" aria-label="{{ $budget['name'] }}: {{ round($ffPct * 100) }}% of budget used"><i class="{{ $ffPct > 1 ? 'ff-over' : ($ffPct > 0.85 ? 'ff-near' : '') }}" style="width: {{ round(min($ffPct, 1) * 100, 1) }}%"></i></div>
+                                                    @if($ffPct > 1)
+                                                        <span class="ff-status ff-status-over">{!! format_amount_by_symbol($ffSpent - $ffLimit, $budgetLimit['currency_symbol'], $budgetLimit['currency_decimal_places'], false) !!} over</span>
+                                                    @else
+                                                        <span class="ff-status ff-status-ok">{{ round($ffPct * 100) }}% used</span>
+                                                    @endif
+                                                </div>
+                                            @endif
+                                        @endforeach
                                     </td>
                                     <td>
                                         @if(0 === count($budget['budgeted']))
@@ -247,13 +265,13 @@
                                                 <span class="input-group-text" id="budgeted_{{ $budget['id'] }}">{{ $primaryCurrency->symbol }}</span>
 
                                                 @if(!$anonymous)
-                                                    <input aria-describedby="budgeted_{{ $budget['id'] }}" class="form-control budget_amount" data-original="0" data-id="{{ $budget['id'] }}" data-currency="{{ $primaryCurrency['id'] }}" data-limit="0" value="0" autocomplete="off" min="0" name="amount" type="number">
+                                                    <input aria-describedby="budgeted_{{ $budget['id'] }}" aria-label="Budgeted amount for {{ $budget['name'] }}" class="form-control budget_amount" data-original="0" data-id="{{ $budget['id'] }}" data-currency="{{ $primaryCurrency['id'] }}" data-limit="0" value="0" autocomplete="off" min="0" name="amount" type="number">
                                                 @endif
                                                 @if($anonymous)
-                                                    <input disabled readonly aria-describedby="budgeted_{{ $budget['id'] }}" class="form-control" data-original="0" data-id="0" data-currency="{{ $primaryCurrency['id'] }}" data-limit="0" value="0" autocomplete="off" min="0" name="amount" type="number">
+                                                    <input disabled readonly aria-describedby="budgeted_{{ $budget['id'] }}" aria-label="Budgeted amount for {{ $budget['name'] }}" class="form-control" data-original="0" data-id="0" data-currency="{{ $primaryCurrency['id'] }}" data-limit="0" value="0" autocomplete="off" min="0" name="amount" type="number">
                                                 @endif
                                                 @if(count($budget['budgeted']) < count($currencies))
-                                                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"><em class="bi bi-caret-down"></em></button>
+                                                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="More options for {{ $budget['name'] }}"></button>
                                                 <ul class="dropdown-menu dropdown-menu-end">
                                                     <li>
                                                         <a href="#" class="dropdown-item create_bl" data-id="{{ $budget['id'] }}">
@@ -277,15 +295,15 @@
                                                     <div class="input-group mb-1">
                                                         <span class="input-group-text">{{ $budgetLimit['currency_symbol'] }}</span>
                                                         @if(!$anonymous)
-                                                            <input class="form-control budget_amount" data-original="{{ $budgetLimit['amount'] }}"
+                                                            <input aria-label="Budgeted amount for {{ $budget['name'] }}" class="form-control budget_amount" data-original="{{ $budgetLimit['amount'] }}"
                                                                    data-id="{{ $budget['id'] }}" data-limit="{{ $budgetLimit['id'] }}" value="{{ $budgetLimit['amount'] }}"
                                                                    autocomplete="off"
                                                                    min="0" name="amount" type="number">
                                                         @endif
                                                         @if($anonymous)
-                                                            <input disabled readonly class="form-control budget_amount" data-original="0" data-id="0" data-limit="0" value="0" autocomplete="off" min="0" name="amount" type="number">
+                                                            <input disabled readonly aria-label="Budgeted amount for {{ $budget['name'] }}" class="form-control budget_amount" data-original="0" data-id="0" data-limit="0" value="0" autocomplete="off" min="0" name="amount" type="number">
                                                         @endif
-                                                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"><em class="bi bi-caret-down"></em></button>
+                                                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="More options for {{ $budget['name'] }}"></button>
                                                         <ul class="dropdown-menu dropdown-menu-end">
                                                             <li>
                                                                 <a class="dropdown-item delete_bl" href="#" data-budget-limit-id="{{ $budgetLimit['id'] }}">
@@ -371,8 +389,8 @@
 
 
                                         <div class="dropdown">
-                                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                {{ __('firefly.actions') }}
+                                            <button class="ff-icon-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Actions for {{ $budget['name'] }}">
+                                                <em class="bi bi-three-dots" aria-hidden="true"></em>
                                             </button>
                                             <ul class="dropdown-menu">
                                                 <li>

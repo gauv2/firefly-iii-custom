@@ -6,7 +6,7 @@
                 <x-elements.card-header-with-menu :cardTitle="$objectGroup['object_group_title']" :route="route('piggy-banks.create')" :linkTitle="__('firefly.create_new_piggy_bank')" />
                 <div class="card-body p-0">
 
-<table class="table table-valign-middle table-hover table-sm piggy-sortable">
+<table class="table table-valign-middle table-hover piggy-sortable ff-goal-table">
     <thead>
     <tr>
         <th class="w-4">&nbsp;</th>
@@ -27,13 +27,13 @@
     @foreach($objectGroup['piggy_banks'] as $piggy)
     <tr class="piggy-sortable" data-id="{{ $piggy['id'] }}" data-name="{{ $piggy['name'] }}" data-order="{{ $piggy['order'] }}">
         <td class="">
-            <a class="btn btn-outline-secondary btn-sm bi bi-list piggy-handle"></a>
+            <a class="btn btn-outline-secondary btn-sm bi bi-grip-vertical piggy-handle" aria-label="Drag to reorder {{ $piggy['name'] }}" title="Drag to reorder"></a>
             <span class="loadSpin"></span>
         </td>
         <td class="d-lg-none"> <!-- mobile buttons -->
             <div class="btn-group btn-group-sm">
-                <a href="{{ route('piggy-banks.remove-money-mobile', $piggy['id']) }}" class="btn btn-outline-danger btn-sm"><span class="bi bi-dash"></span></a>
-                <a href="{{ route('piggy-banks.add-money-mobile', $piggy['id']) }}" class="btn btn-outline-success btn-sm"><span class="bi bi-plus"></span></a>
+                <a href="{{ route('piggy-banks.remove-money-mobile', $piggy['id']) }}" class="btn btn-outline-danger btn-sm" aria-label="Take money out of {{ $piggy['name'] }}"><span class="bi bi-dash" aria-hidden="true"></span></a>
+                <a href="{{ route('piggy-banks.add-money-mobile', $piggy['id']) }}" class="btn btn-outline-success btn-sm" aria-label="Put money into {{ $piggy['name'] }}"><span class="bi bi-plus" aria-hidden="true"></span></a>
             </div>
         </td>
         <td>
@@ -52,24 +52,17 @@
         </td>
         <td class="d-none d-lg-table-cell" style="width:40px;">
             @if($piggy['current_amount'] > 0)
-            <a href="{{ route('piggy-banks.remove-money', $piggy['id']) }}" class="btn btn-secondary btn-sm removeMoney" data-id="{{ $piggy['id'] }}">
+            <a href="{{ route('piggy-banks.remove-money', $piggy['id']) }}" class="btn btn-outline-secondary btn-sm removeMoney" data-id="{{ $piggy['id'] }}" aria-label="Take money out of {{ $piggy['name'] }}" title="Take money out">
                 <span data-id="{{ $piggy['id'] }}" class="bi bi-dash"></span></a>
             @endif
         </td>
 
         <td class="d-none d-lg-table-cell piggyBar">
+            {{-- custom: a bar drawn to scale, with the percentage written out --}}
             @if(null !== $piggy['percentage'])
-                <div class="progress"
-                    style="height: 21px" role="progressbar" aria-valuenow="{{ round(max(30, $piggy['percentage'])) }}" aria-valuemin="0" aria-valuemax="100">
-                    <div
-                        @if(100 === $piggy['percentage'])
-                            class="progress-bar progress-bar-striped bg-success w-{{ round(max(30, $piggy['percentage'])) }}"
-                        @elseif(0 === $piggy['percentage'])
-                            class="progress-bar progress-bar-striped bg-warning w-{{ round(max(30, $piggy['percentage'])) }}"
-                        @else
-                            class="progress-bar progress-bar-striped bg-info w-{{ round(max(30, $piggy['percentage'])) }}"
-                        @endif
-                        ></div>
+                <div class="ff-goal-meter">
+                    <div class="ff-bar" role="img" aria-label="{{ $piggy['name'] }}: {{ round($piggy['percentage']) }}% saved"><i class="{{ 100 <= $piggy['percentage'] ? 'ff-done' : '' }}" style="width: {{ min(100, max(0, round($piggy['percentage']))) }}%"></i></div>
+                    <span>{{ round($piggy['percentage']) }}%</span>
                 </div>
             @endif
 
@@ -80,7 +73,7 @@
 
         <td class="d-none d-lg-table-cell">
             @if($piggy['left_to_save'] > 0 || null === $piggy['left_to_save'])
-            <a href="{{ route('piggy-banks.add-money', $piggy['id']) }}" class="btn btn-secondary btn-sm addMoney" data-id="{{ $piggy['id'] }}">
+            <a href="{{ route('piggy-banks.add-money', $piggy['id']) }}" class="btn btn-outline-secondary btn-sm addMoney" data-id="{{ $piggy['id'] }}" aria-label="Put money into {{ $piggy['name'] }}" title="Put money in">
                 <span data-id="{{ $piggy['id'] }}" class="b bi-plus"></span></a>
             @endif
         </td>
