@@ -2,7 +2,7 @@
 {{-- custom: one primary "Add transaction" button; the caret opens everything else you can create --}}
 <li class="nav-item ff-add">
     <div class="btn-group">
-    <a href="{{ route('transactions.create', ['withdrawal']) }}?_from={{ urlencode($FF3_FROM) }}" class="btn btn-primary ff-add-main">
+    <a href="{{ route('transactions.create', ['withdrawal']) }}?_from={{ urlencode($FF3_FROM) }}" class="btn btn-primary ff-add-main" data-ff-add>
         <em class="bi bi-plus-lg" aria-hidden="true"></em>
         <span class="ff-add-label">Add transaction</span>
     </a>

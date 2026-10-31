@@ -334,6 +334,7 @@
             @if($FF_IS_BETA)<small class="text-warning"><br>{{ __('firefly.is_beta_warning') }}</small>@endif
         </span>
     </footer>
+    <x-layout.add-sheet/>
     {{-- custom: bottom tab bar on phones and tablets --}}
     <nav class="ff-tabbar" aria-label="Quick navigation">
         <a href="{{ route('index') }}" @if('index' === Route::currentRouteName()) aria-current="page" @endif>
@@ -342,7 +343,7 @@
         <a href="{{ route('transactions.index', ['all']) }}" @if(str_starts_with((string) Route::currentRouteName(), 'transactions.')) aria-current="page" @endif>
             <em class="bi bi-list-ul" aria-hidden="true"></em><span>Transactions</span>
         </a>
-        <a href="{{ route('transactions.create', ['withdrawal']) }}" class="ff-tab-add" aria-label="Add transaction">
+        <a href="{{ route('transactions.create', ['withdrawal']) }}" class="ff-tab-add" aria-label="Add transaction" data-ff-add>
             <span class="ff-fab"><em class="bi bi-plus-lg" aria-hidden="true"></em></span>
         </a>
         <a href="{{ route('budgets.index') }}" @if(str_starts_with((string) Route::currentRouteName(), 'budgets.')) aria-current="page" @endif>

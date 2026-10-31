@@ -1,126 +1,91 @@
 @extends('layout.v3.session')
+{{-- custom: redesigned transactions list (filter chips, period summary, day-grouped rows). Upstream's pie charts are dropped. --}}
 @section('content')
-
-    {{-- upper show-all instruction --}}
-    @if(is_countable($periods) && count($periods) > 0)
-        <div class="row">
-            {{-- for withdrawals, deposits and transfers --}}
-            <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                <div class="card mb-2">
-                    <div class="card-header">
-                        <h3 class="card-title">{{ __('firefly.categories') }}</h3>
-                    </div>
-                    <div class="card-body">
-                        <canvas id="category_chart" class="medium-chart" height="250"></canvas>
-                    </div>
-                </div>
-            </div>
-            {{-- only for withdrawals --}}
-            @if('withdrawal' === $objectType)
-                <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                    <div class="card mb-2">
-                        <div class="card-header">
-                            <h3 class="card-title">{{ __('firefly.budgets') }}</h3>
-                        </div>
-                        <div class="card-body">
-                            <canvas id="budget_chart" class="medium-chart" height="250"></canvas>
-                        </div>
-                    </div>
-                </div>
-            @endif
-            @if('withdrawal' !== $objectType)
-                <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                    <div class="card mb-2">
-                        <div class="card-header with-border">
-                            <h3 class="card-title">{{ __('firefly.all_source_accounts') }}</h3>
-                        </div>
-                        <div class="card-body">
-                            <canvas id="source_chart" class="medium-chart" height="250"></canvas>
-                        </div>
-                    </div>
-                </div>
-            @endif
-            {{-- for all --}}
-            <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                <div class="card mb-2">
-                    <div class="card-header with-border">
-                        <h3 class="card-title">{{ __('firefly.all_destination_accounts') }}</h3>
-                    </div>
-                    <div class="card-body">
-                        <canvas id="destination_chart" class="medium-chart" height="250"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="offset-lg-10 col-lg-2 offset-md-10 col-md-2 col-sm-12 col-xs-12">
-                <p class="small text-center"><a href="{{ route('transactions.index.all',[$objectType]) }}">{{ __('firefly.showEverything') }}</a></p>
-            </div>
-        </div>
-    @endif
-
-
-    {{-- list with journals --}}
-    <div class="row">
-        <div class="@if(is_countable($periods) && count($periods) > 0) col-lg-10 col-md-10 col-sm-12 @else col-lg-12 col-md-12 col-sm-12 @endif">
-            <div class="card mb-2">
-                <x-elements.card-header-with-menu :cardTitle="$subTitle" :route="route('transactions.create', [$objectType])" :linkTitle="__('firefly.create_new_transaction')" />
-                <div class="card-body p-0">
-                    <x-lists.groups-large :groups="$groups" :account="null" :show-category="true" :show-budget="true" />
-                </div>
-                <div class="card-footer">
-                    {{-- links for other views --}}
-                    @if(is_countable($periods) && count($periods) > 0)
-                        <p>
-                            <span class="bi bi-calendar"></span>
-                            <a href="{{ route('transactions.index.all', [$objectType]) }}">{{ __('firefly.show_all_no_filter') }}</a>
-                        </p>
-                    @else
-                        <p>
-                            <span class="bi bi-calendar"></span>
-                            <a href="{{ route('transactions.index', [$objectType]) }}">{{ __('firefly.show_the_current_period_and_overview') }}</a>
-                        </p>
-                    @endif
-                </div>
+    @php
+        $hasPeriods = is_countable($periods) && count($periods) > 0;
+        $current = $hasPeriods ? $periods[array_key_first($periods)] : null;
+        $chips = ['all' => 'All', 'withdrawal' => 'Money out', 'deposit' => 'Money in', 'transfers' => __('firefly.transfers')];
+        $active = 'transfer' === $objectType ? 'transfers' : $objectType;
+    @endphp
+    <div class="ff-page">
+        <div class="ff-toolbar">
+            <nav class="ff-chips" aria-label="Filter transactions">
+                @foreach($chips as $key => $label)
+                    <a class="ff-chip" href="{{ $hasPeriods ? route('transactions.index', [$key]) : route('transactions.index.all', [$key]) }}" @if($active === $key) aria-current="page" @endif>{{ $label }}</a>
+                @endforeach
+            </nav>
+            <div class="ff-toolbar-end">
+                @if($hasPeriods)
+                    <a class="btn btn-sm btn-outline-secondary" href="{{ route('transactions.index.all', [$objectType]) }}">{{ __('firefly.showEverything') }}</a>
+                @else
+                    <a class="btn btn-sm btn-outline-secondary" href="{{ route('transactions.index', [$objectType]) }}">Current period only</a>
+                @endif
             </div>
         </div>
 
-        {{-- boxes with info --}}
-        @if(is_countable($periods) && count($periods) > 0)
-            <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
-                <x-lists.periods :periods="$periods" />
-            </div>
+        @if(null !== $current)
+            <section class="card ff-summary ff-summary-3" aria-label="{{ $current['title'] }}">
+                <div class="ff-stat">
+                    <span class="ff-stat-label">{{ $current['title'] }}</span>
+                    <span class="ff-stat-value">{{ $current['total_transactions'] }}</span>
+                    <span class="ff-stat-sub">{{ 1 === $current['total_transactions'] ? 'transaction' : 'transactions' }}</span>
+                </div>
+                <div class="ff-stat">
+                    <span class="ff-stat-label">Money out</span>
+                    <span class="ff-stat-value">
+                        @php $shown = false; @endphp
+                        @foreach(($current['spent'] ?? []) as $spent)
+                            @if(is_array($spent) && 0 !== $spent['amount'])
+                                @php $shown = true; @endphp
+                                {!! format_amount_by_symbol(abs((float) $spent['amount']), $spent['currency_symbol'], $spent['currency_decimal_places'], false) !!}
+                            @endif
+                        @endforeach
+                        @if(!$shown)—@endif
+                    </span>
+                    <span class="ff-stat-sub">This period</span>
+                </div>
+                <div class="ff-stat">
+                    <span class="ff-stat-label">Money in</span>
+                    <span class="ff-stat-value ff-pos">
+                        @php $shown = false; @endphp
+                        @foreach(($current['earned'] ?? []) as $entry)
+                            @if(is_array($entry) && 0 !== $entry['amount'])
+                                @php $shown = true; @endphp
+                                {!! format_amount_by_symbol(abs((float) $entry['amount']), $entry['currency_symbol'], $entry['currency_decimal_places'], false) !!}
+                            @endif
+                        @endforeach
+                        @if(!$shown)—@endif
+                    </span>
+                    <span class="ff-stat-sub">This period</span>
+                </div>
+            </section>
         @endif
 
+        <section class="card ff-txcard" aria-label="{{ $subTitle }}">
+            <x-lists.groups-day :groups="$groups" :account="null" />
+        </section>
+
+        @if($hasPeriods && count($periods) > 1)
+            <section class="card" aria-labelledby="ff-h-periods">
+                <div class="ff-card-h"><h2 id="ff-h-periods">Earlier periods</h2></div>
+                <div class="ff-card-b ff-periods">
+                    @foreach(array_slice($periods, 1) as $period)
+                        <a class="ff-period-link" href="{{ $period['route'] }}">
+                            <b>{{ $period['title'] }}</b>
+                            <span>{{ $period['total_transactions'] }} transactions</span>
+                            @foreach(($period['spent'] ?? []) as $spent)
+                                @if(is_array($spent) && 0 !== $spent['amount'])
+                                    <span>{!! format_amount_by_symbol(abs((float) $spent['amount']), $spent['currency_symbol'], $spent['currency_decimal_places'], false) !!} out</span>
+                                @endif
+                            @endforeach
+                        </a>
+                    @endforeach
+                </div>
+            </section>
+        @endif
     </div>
-
-    {{-- lower show-all instruction  --}}
-    @if(is_countable($periods) && count($periods) > 0)
-        <div class="row">
-            <div class="offset-lg-10 col-lg-2 offset-md-10 col-md-2 col-sm-12 col-xs-12">
-                <p class="small text-center"><a href="{{ route('transactions.index.all', [$objectType]) }}">{{ __('firefly.showEverything') }}</a></p>
-            </div>
-        </div>
-        @endif
-
 @endsection
 @section('scripts')
     @vite(['js/pages/generic-nodates.js'])
-    {{--  required for groups.twig --}}
-     <script nonce="{{ $JS_NONCE }}">
-        var showAll = @if(is_countable($periods) && count($periods) > 0) false @else true @endif;
-        var categoryChartUrl = '{{ route('chart.transactions.categories', [$objectType, $start->format('Y-m-d'), $end->format('Y-m-d')]) }}';
-        var budgetChartUrl = '{{ route('chart.transactions.budgets', [$start->format('Y-m-d'), $end->format('Y-m-d')]) }}';
-        var destinationChartUrl = '{{ route('chart.transactions.destinationAccounts', [$objectType, $start->format('Y-m-d'), $end->format('Y-m-d')]) }}';
-        var sourceChartUrl = '{{ route('chart.transactions.sourceAccounts', [$objectType, $start->format('Y-m-d'), $end->format('Y-m-d')]) }}';
-
-    </script>
-     <script src="v1/js/lib/Chart.bundle.min.js?v={{ $FF_BUILD_TIME }}" nonce="{{ $JS_NONCE }}"></script>
-     <script src="v1/js/lib/chartjs-plugin-annotation.min.js?v={{ $FF_BUILD_TIME }}" nonce="{{ $JS_NONCE }}"></script>
-     <script src="v1/js/ff/charts.defaults.js?v={{ $FF_BUILD_TIME }}" nonce="{{ $JS_NONCE }}"></script>
-     <script src="v1/js/ff/charts.js?v={{ $FF_BUILD_TIME }}" nonce="{{ $JS_NONCE }}"></script>
-
-     <script src="v1/js/ff/transactions/index.js?v={{ $FF_BUILD_TIME }}" nonce="{{ $JS_NONCE }}"></script>
-     <script src="v1/js/ff/list/groups.js?v={{ $FF_BUILD_TIME }}" nonce="{{ $JS_NONCE }}"></script>
-
+    <script src="v1/js/ff/list/groups.js?v={{ $FF_BUILD_TIME }}" nonce="{{ $JS_NONCE }}"></script>
 @endsection

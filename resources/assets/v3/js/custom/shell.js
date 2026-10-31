@@ -4,7 +4,10 @@
  * - the previous/next arrows reuse the period menu's own prev/next items (pages/shared/dates.js)
  * - a whole month reads "October 2026" instead of "Oct 1 - Oct 31"
  * - "/" focuses the search field
+ * - the quick "Add transaction" panel (add-sheet.js)
  */
+
+import "./add-sheet.js";
 
 function clickMenuItem(selector) {
     const item = document.querySelector("#date-dropdown " + selector);
