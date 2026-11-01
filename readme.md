@@ -1,3 +1,8 @@
+> **This is Finance, a personal fork of Firefly III** with a redesigned interface, extra pages and
+> receipt/invoice scanning (which, unlike Firefly III itself, uses AI). It is not affiliated with the
+> Firefly III project. See [custom/README.md](custom/README.md) for what is changed, and use
+> [firefly-iii/firefly-iii](https://github.com/firefly-iii/firefly-iii) for the real thing.
+
 <p align="center">
   <a href="https://firefly-iii.org/">
     <img src="https://raw.githubusercontent.com/firefly-iii/firefly-iii/develop/.github/assets/img/logo-small.png" alt="Firefly III" width="120" height="178">

@@ -3,7 +3,7 @@
  * Firefly III Custom: the Employer page (resources/views/custom/employer.blade.php).
  *
  * Payslips, mobility statements, reimbursement senders and the figures typed in here live in one user
- * preference, "customEmployer" (loaded by firefly/employer in the GauravVPS repo). Business expenses,
+ * preference, "customEmployer" (written through the v1 preferences API). Business expenses,
  * reimbursements and fuel come from Firefly's own transactions through the search API.
  */
 
@@ -420,7 +420,7 @@ async function run() {
         const el = fill(
             "empty",
             `<section class="card"><div class="ff-card-b ff-employer-empty"><h2>No employer documents yet</h2>
-            <p>Payslips and mobility statements are loaded with the <code>firefly/employer</code> scripts in the GauravVPS repo. Business expenses and reimbursements below work without them.</p></div></section>`,
+            <p>Payslips and mobility statements are stored in the <code>customEmployer</code> preference through the API (see custom/README.md). Business expenses and reimbursements below work without them.</p></div></section>`,
         );
         el.hidden = false;
     }

@@ -7,8 +7,7 @@
     <div class="ff-home ff-scan"
          id="ff-scan"
          data-url-extract="{{ route('scan.extract') }}"
-         data-url-transaction="{{ route('transactions.show', ['__ID__']) }}"
-         data-default-account="ING Checking">
+         data-url-transaction="{{ route('transactions.show', ['__ID__']) }}">
 
         <section class="card ff-scan-start" aria-labelledby="ff-h-add">
             <div class="ff-card-h">

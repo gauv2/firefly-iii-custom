@@ -3,14 +3,14 @@
  * Firefly III Custom: the Scan page (resources/views/custom/scan.blade.php).
  *
  * Each photo or PDF is sent to ScanController@extract, which has it read by the scan service
- * (Claude Code on the Claude subscription). The fields come back for review, next to the existing
+ * (scan/ in this repository: Claude Code on a Claude subscription). The fields come back for review, next to the existing
  * transactions with the same amount around that date. Saving attaches the file to the chosen
  * transaction, or creates a withdrawal tagged "receipt" and attaches it there.
  *
  * "Possible duplicates" pairs each "receipt" transaction with a bank transaction of the same amount
  * within a few days. Nothing is merged without a click: merging moves the attachments, category and
  * notes onto the bank transaction and deletes the scanned one. Dismissed pairs are remembered in the
- * "customScan" preference.
+ * "customScan" preference, which can also name the default account: {"defaultAccount": "Checking"}.
  */
 
 import "../boot/bootstrap.js";
@@ -26,7 +26,7 @@ const DUPE_LOOKBACK_DAYS = 120;
 
 const root = document.getElementById("ff-scan");
 let accounts = [];
-let prefs = { dismissed: [] };
+let prefs = { dismissed: [], defaultAccount: null };
 let hidden = false;
 let ready = Promise.resolve();
 
@@ -134,7 +134,11 @@ async function loadPrefs() {
     try {
         const res = await api("GET", `api/v1/preferences/${PREF}`);
         const d = res.data.attributes.data;
-        prefs = { dismissed: Array.isArray(d?.dismissed) ? d.dismissed : [] };
+        prefs = {
+            dismissed: Array.isArray(d?.dismissed) ? d.dismissed : [],
+            // name of the asset account new receipts are paid from; the first account when unset
+            defaultAccount: typeof d?.defaultAccount === "string" ? d.defaultAccount : null,
+        };
     } catch (e) {
         if (e.status !== 404) {
             throw e;
@@ -267,7 +271,7 @@ function showForm(item, d) {
     f("notes").value = notesFrom(d);
     item.currency = d.currency || "EUR";
 
-    const def = root.dataset.defaultAccount.toLowerCase();
+    const def = (prefs.defaultAccount ?? "").toLowerCase();
     const preferred = accounts.find((a) => a.attributes.name.toLowerCase() === def) ?? accounts[0];
     f("account").innerHTML = accounts
         .map((a) => `<option value="${esc(a.id)}"${a === preferred ? " selected" : ""}>${esc(a.attributes.name)}</option>`)

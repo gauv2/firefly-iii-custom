@@ -41,7 +41,7 @@
                 <ul class="ff-chips" data-fill="senders" aria-labelledby="ff-h-senders"></ul>
                 <form class="ff-employer-add" data-form="sender">
                     <label class="visually-hidden" for="ff-sender-input">Sender name</label>
-                    <input type="text" class="form-control" id="ff-sender-input" placeholder="e.g. EY Adviseurs" autocomplete="off" required>
+                    <input type="text" class="form-control" id="ff-sender-input" placeholder="e.g. Acme B.V." autocomplete="off" required>
                     <button type="submit" class="btn btn-outline-secondary">Add sender</button>
                 </form>
                 <p class="ff-employer-status" data-fill="senders-status" role="status"></p>

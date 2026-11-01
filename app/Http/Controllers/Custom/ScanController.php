@@ -5,7 +5,7 @@
  * Firefly III Custom: the Scan page (receipts and invoices).
  *
  * index() renders the page; extract() passes one uploaded photo or PDF to the scan service
- * (firefly/scan in the GauravVPS repo, reachable as http://scan:8080 inside the compose network) and
+ * (scan/ in this repository, reachable as http://scan:8080 inside the compose network) and
  * returns the fields it read. Matching, creating transactions and attaching the file happen in
  * js/custom/scan.js through the v1 API.
  */
