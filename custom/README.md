@@ -1,5 +1,7 @@
 # Firefly III Custom
 
+Runs as **Finance** at finance.g4uv.com.
+
 A personal copy of [Firefly III](https://github.com/firefly-iii/firefly-iii) (AGPL-3.0) with a redesigned interface.
 `custom` is the default branch; `main` follows upstream.
 
@@ -15,6 +17,7 @@ goes through upstream's API. The API and the database schema are upstream's.
 | Shell: top bar, period switcher, search, "Add transaction", phone tab bar | `_custom-shell.scss`, `js/custom/shell.js`, `views/layout/v3/session.blade.php`, `views/components/layout/{sidebar,range,create-menu,user-menu}.blade.php` |
 | Home page | `views/index.blade.php`, `js/custom/home.js`, `_custom-home.scss` |
 | Employer page (payslips, expensing, mobility budget; data in the `customEmployer` preference) | `routes/web.php` (custom: group), `app/Http/Controllers/Custom/EmployerController.php`, `views/custom/employer.blade.php`, `js/custom/employer.js`, `_custom-employer.scss`, a sidebar link |
+| Name and icons: "Finance" in titles, sidebar, error and login pages and the web manifest; a new mark replacing the flame (the footer keeps Firefly III's notice) | `views/layout/v3/*.blade.php`, `views/components/layout/fav-icons*.blade.php`, `custom/brand/` (SVG sources, rendered into `public/` by the image build) |
 | Image | `custom/Dockerfile` |
 
 Custom code is kept in its own files where possible, so upstream updates merge with few conflicts.

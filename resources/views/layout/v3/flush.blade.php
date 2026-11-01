@@ -14,7 +14,7 @@
     please visit the following page: https://bit.ly/FF3-broken-base-href
     -->
     <base href="{{ route('index', null, true) }}/">
-    <title>@yield('status') - {{ $title ?? 'Firefly III'  }}</title>
+    <title>@yield('status') - {{ $title ?? 'Finance'  }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes"/>
     <meta name="theme-color" content="#007bff" media="(prefers-color-scheme: light)"/>
     <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)"/>
@@ -34,7 +34,7 @@
         <div class="row justify-content-center">
             <div class="col-md-12 col-lg-8 col-xl-8">
                 <p class="text-center">
-                    <img src="images/logo-session.png" width="68" height="100" alt="Firefly III Logo" title="Firefly III"/><br>
+                    <img src="favicon.svg" width="64" height="64" alt="Finance" title="Finance"/><br>
                 </p>
                 <h1 style="text-align:center;"><em class="bi bi-hourglass"></em></h1>
                 @yield('content')

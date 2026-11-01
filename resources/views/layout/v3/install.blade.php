@@ -14,7 +14,7 @@
     please visit the following page: https://bit.ly/FF3-broken-base-href
     -->
     <base href="{{ route('index', null, true) }}/">
-    <title>Firefly III - Installation and upgrade</title>
+    <title>Finance - Installation and upgrade</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes"/>
     <meta name="theme-color" content="#007bff" media="(prefers-color-scheme: light)"/>
     <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)"/>
@@ -37,17 +37,17 @@
         <div class="row justify-content-center">
             <div class="col-md-12 col-lg-8 col-xl-8">
                 <p class="text-center">
-                    <img src="images/logo-session.png" width="68" height="100" alt="Firefly III Logo" title="Firefly III"/><br>
+                    <img src="favicon.svg" width="64" height="64" alt="Finance" title="Finance"/><br>
                 </p>
                 @if(str_starts_with($FF_VERSION, 'develop'))
                     <h1 style="font-family: monospace;font-size:16pt;">
                         <em class="bi bi-wrench"></em>
-                        <strong>Firefly</strong> III {{ $FF_VERSION }} - Installation and upgrade</h1>
+                        <strong>Finance</strong> {{ $FF_VERSION }} - Installation and upgrade</h1>
                 @endif
                 @if(!str_starts_with($FF_VERSION, 'develop'))
                     <h1>
                         <em class="bi bi-wrench"></em>
-                        <strong>Firefly</strong> III v{{ $FF_VERSION }} - Installation and upgrade</h1>
+                        <strong>Finance</strong> v{{ $FF_VERSION }} - Installation and upgrade</h1>
                 @endif
                 @yield('content')
             </div>

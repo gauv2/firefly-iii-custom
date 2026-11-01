@@ -37,17 +37,17 @@
         <div class="row justify-content-center">
             <div class="col-md-12 col-lg-8 col-xl-8">
                 <p class="text-center">
-                    <img src="images/logo-session.png" width="68" height="100" alt="Firefly III Logo" title="Firefly III"/><br>
+                    <img src="favicon.svg" width="64" height="64" alt="Finance" title="Finance"/><br>
                 </p>
                 @if(str_starts_with($FF_VERSION, 'develop'))
                     <h1 style="font-family: monospace;font-size:14pt;">
                         <em class="bi bi-bug"></em>
-                        <strong>Firefly</strong> III {{ $FF_VERSION }} - Debug information</h1>
+                        <strong>Finance</strong> {{ $FF_VERSION }} - Debug information</h1>
                 @endif
                 @if(!str_starts_with($FF_VERSION, 'develop'))
                     <h1>
                         <em class="bi bi-bug"></em>
-                        <strong>Firefly</strong> III v{{ $FF_VERSION }} - Debug information</h1>
+                        <strong>Finance</strong> v{{ $FF_VERSION }} - Debug information</h1>
                 @endif
                 <h2 class="text-danger">@yield('sub_title')</h2>
                 @yield('content')

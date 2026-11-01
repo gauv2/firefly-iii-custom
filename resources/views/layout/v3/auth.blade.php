@@ -32,8 +32,8 @@
 <div class="login-box">
     <div class="login-logo">
         @if(true=== ($IS_DEMO_SITE ?? false))
-            <img src="images/logo-session.png" width="68" height="100" alt="Logo" title="Logo"/><br>
-            <a href="{{ route('index', null, true) }}"><strong>Firefly</strong> III</a>
+            <img src="favicon.svg" width="64" height="64" alt="" /><br>
+            <a href="{{ route('index', null, true) }}"><strong>Finance</strong></a>
         @endif
     </div>
     @yield('content')

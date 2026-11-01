@@ -24,7 +24,8 @@
         @if('Firefly III' !== $title)
             {{ $title }} »
         @endif
-        Firefly III
+        {{-- custom: renamed to Finance --}}
+        Finance
     </title>
     <!--begin::Theme Init (prevents flash of incorrect theme on load, #6043)-->
     <script nonce="{{ $JS_NONCE }}">
@@ -229,14 +230,17 @@
             <!--begin::Brand Link-->
             <a href="{{ route('index') }}" class="brand-link">
                 <!--begin::Brand Image-->
+                {{-- custom: the Finance mark and name --}}
                 <img
-                    src="./images/logo-session.png"
-                    alt="Firefly III"
-                    class="brand-image opacity-75"
+                    src="./favicon.svg"
+                    alt=""
+                    width="28"
+                    height="28"
+                    class="brand-image"
                 >
                 <!--end::Brand Image-->
                 <!--begin::Brand Text-->
-                <span class="brand-text fw-light">Firefly III</span>
+                <span class="brand-text">Finance</span>
                 <!--end::Brand Text-->
             </a>
             <!--end::Brand Link-->
@@ -328,7 +332,8 @@
             <a href="{{route('debug')}}">v{{ $FF_VERSION }}</a>
         </div>
         <span>
-            <a href="https://www.firefly-iii.org/" target="_blank" title="Firefly III">Firefly III</a> &copy; James Cole, <a
+            {{-- custom: Finance is built on Firefly III; its notice stays --}}
+            Finance, built on <a href="https://www.firefly-iii.org/" target="_blank" title="Firefly III">Firefly III</a> &copy; James Cole, <a
                 href="https://www.gnu.org/licenses/agpl-3.0.html" title="AGPL-3.0-or-later.">AGPL-3.0-or-later</a>.
             @if($FF_IS_ALPHA)<small class="text-danger"><br>{{ __('firefly.is_alpha_warning') }}</small>@endif
             @if($FF_IS_BETA)<small class="text-warning"><br>{{ __('firefly.is_beta_warning') }}</small>@endif

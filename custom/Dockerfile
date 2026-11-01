@@ -16,10 +16,17 @@ RUN npm ci --no-audit --no-fund
 COPY resources/assets/v3 resources/assets/v3
 RUN cd resources/assets/v3 && npm run build
 
+# The Finance icons and web manifest, rendered from custom/brand under upstream's file names.
+FROM alpine:3.22 AS brand
+RUN apk add --no-cache rsvg-convert imagemagick
+COPY custom/brand /brand
+RUN sh /brand/build.sh /out
+
 FROM fireflyiii/core:version-${FIREFLY_VERSION}
 COPY --chown=www-data:www-data resources/views /var/www/html/resources/views
 COPY --from=assets --chown=www-data:www-data /src/public/build /var/www/html/public/build
+COPY --from=brand --chown=www-data:www-data /out/ /var/www/html/public/
 COPY --chown=www-data:www-data routes/web.php /var/www/html/routes/web.php
 COPY --chown=www-data:www-data app/Http/Controllers/Custom /var/www/html/app/Http/Controllers/Custom
 LABEL org.opencontainers.image.source="https://github.com/gauv2/firefly-iii-custom" \
-      org.opencontainers.image.description="Firefly III with the Firefly III Custom redesign"
+      org.opencontainers.image.description="Finance: Firefly III with the Firefly III Custom redesign"
