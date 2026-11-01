@@ -275,6 +275,11 @@
         padding: 0 4px;
     }
 
+    // the label itself opens the period menu; the caret only costs room here
+    .ff-period-label .ff-period-caret {
+        display: none;
+    }
+
     // keep the top bar to what fits: help moves out of the way on phones
     .ff-end #help {
         display: none;

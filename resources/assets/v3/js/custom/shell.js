@@ -2,7 +2,7 @@
  * shell.js
  * Firefly III Custom: small behaviour for the redesigned top bar, loaded on every page.
  * - the previous/next arrows reuse the period menu's own prev/next items (pages/shared/dates.js)
- * - the period reads compactly ("October 2026", "2026", "Jan 1 – Nov 1, 2026"), built from the
+ * - the period reads compactly ("October", "2025", "Jan 1 – Nov 1"; the year only outside this year), built from the
  *   period the pages load their data for (window.store), so it cannot drift from what is shown
  * - "/" focuses the search field
  * - the quick "Add transaction" panel (add-sheet.js)
@@ -20,7 +20,9 @@ function clickMenuItem(selector) {
 function periodText(start, end) {
     const lang = document.documentElement.lang || "en";
     const sameYear = start.getFullYear() === end.getFullYear();
-    const day = (d, withYear) => d.toLocaleDateString(lang, { month: "short", day: "numeric", ...(withYear ? { year: "numeric" } : {}) });
+    // the year is left out while the whole period is in the current year (the full dates are in the title)
+    const thisYear = sameYear && start.getFullYear() === new Date().getFullYear();
+    const day = (d, withYear) => d.toLocaleDateString(lang, { month: "short", day: "numeric", ...(withYear && !thisYear ? { year: "numeric" } : {}) });
     const lastOfMonth = new Date(start.getFullYear(), start.getMonth() + 1, 0).getDate();
     if (start.toDateString() === end.toDateString()) {
         return day(start, true);
@@ -29,7 +31,7 @@ function periodText(start, end) {
         return String(start.getFullYear());
     }
     if (sameYear && start.getMonth() === end.getMonth() && start.getDate() === 1 && end.getDate() === lastOfMonth) {
-        return start.toLocaleDateString(lang, { month: "long", year: "numeric" });
+        return start.toLocaleDateString(lang, thisYear ? { month: "long" } : { month: "long", year: "numeric" });
     }
     if (sameYear) {
         return `${day(start, false)} – ${day(end, true)}`;
