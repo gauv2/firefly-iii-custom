@@ -5,13 +5,16 @@ A personal copy of [Firefly III](https://github.com/firefly-iii/firefly-iii) (AG
 
 ## What is changed
 
-Only the look: Blade views and front-end assets. PHP code, the API and the database are upstream's.
+The look (Blade views and front-end assets) and a few extra pages. Each extra page is one route in
+`routes/web.php` and a controller in `app/Http/Controllers/Custom` that only renders a view; its data
+goes through upstream's API. The API and the database schema are upstream's.
 
 | Area | Files |
 | --- | --- |
 | Design tokens and theme (colours, Geist, corners, focus, contrast) | `resources/assets/v3/sass/_custom-theme.scss`, imported at the end of `app.scss` |
 | Shell: top bar, period switcher, search, "Add transaction", phone tab bar | `_custom-shell.scss`, `js/custom/shell.js`, `views/layout/v3/session.blade.php`, `views/components/layout/{sidebar,range,create-menu,user-menu}.blade.php` |
 | Home page | `views/index.blade.php`, `js/custom/home.js`, `_custom-home.scss` |
+| Employer page (payslips, expensing, mobility budget; data in the `customEmployer` preference) | `routes/web.php` (custom: group), `app/Http/Controllers/Custom/EmployerController.php`, `views/custom/employer.blade.php`, `js/custom/employer.js`, `_custom-employer.scss`, a sidebar link |
 | Image | `custom/Dockerfile` |
 
 Custom code is kept in its own files where possible, so upstream updates merge with few conflicts.

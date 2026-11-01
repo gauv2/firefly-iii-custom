@@ -43,6 +43,7 @@ export default defineConfig(({ command }) => {
                     // custom: Firefly III Custom redesign
                     "js/custom/shell.js",
                     "js/custom/home.js",
+                    "js/custom/employer.js",
 
                     // dashboard
                     "js/pages/dashboard/boxes.js",

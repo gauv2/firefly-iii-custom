@@ -1,0 +1,193 @@
+/*
+ * _custom-employer.scss
+ * Firefly III Custom: the Employer page (custom/employer.blade.php + js/custom/employer.js).
+ * Cards, empty text and skeletons come from _custom-home.scss (.ff-home).
+ */
+
+.ff-employer-lead {
+    max-width: 68ch;
+    margin: 0;
+    color: var(--ff-text-2);
+}
+
+.ff-employer-h3 {
+    font-size: 13.5px;
+    font-weight: 600;
+    margin: 10px 0 8px;
+}
+
+.ff-employer-h3 + div,
+.ff-employer-help {
+    margin-bottom: 0;
+}
+
+.ff-employer-h3:not(:first-child) {
+    margin-top: 22px;
+    padding-top: 16px;
+    border-top: 1px solid var(--ff-border);
+}
+
+.ff-employer-help {
+    font-size: 13px;
+    color: var(--ff-text-2);
+    max-width: 68ch;
+}
+
+.ff-employer-empty h2 {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 10px 0 4px;
+}
+
+.ff-employer-empty p {
+    margin: 0;
+    color: var(--ff-text-2);
+}
+
+.ff-muted {
+    color: var(--ff-text-3);
+}
+
+.ff-small {
+    font-size: 12px;
+}
+
+// tables
+.ff-table-scroll {
+    overflow-x: auto;
+    border-radius: 6px;
+}
+
+.ff-table-scroll:focus-visible {
+    outline: 2px solid var(--ff-focus);
+    outline-offset: 2px;
+}
+
+.ff-employer-table {
+    margin: 0;
+    font-variant-numeric: tabular-nums;
+}
+
+.ff-employer-table th,
+.ff-employer-table td {
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.ff-employer-table tbody th,
+.ff-employer-table tfoot th {
+    font-weight: 500;
+}
+
+.ff-employer-table .ff-num {
+    text-align: right;
+}
+
+.ff-employer-table .ff-strong > * {
+    font-weight: 650;
+}
+
+.ff-employer-table tfoot > tr > * {
+    border-top: 1px solid var(--ff-border-strong);
+    border-bottom: 0;
+}
+
+.ff-employer-table a {
+    text-decoration: none;
+}
+
+.ff-employer-table a:hover {
+    text-decoration: underline;
+}
+
+// first column stays put while the payslip columns scroll
+.ff-sticky-first > * > tr > :first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: var(--ff-surface-raised);
+    box-shadow: 1px 0 0 var(--ff-border);
+}
+
+.ff-sticky-first .ff-strong > * {
+    background: var(--ff-accent-soft);
+}
+
+.ff-cell-input.form-control {
+    width: 8.5em;
+    min-height: 32px;
+    margin-left: auto;
+    padding: 4px 8px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+// reimbursement senders
+.ff-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 12px;
+}
+
+.ff-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 2px 2px 2px 10px;
+    border: 1px solid var(--ff-border-strong);
+    border-radius: 999px;
+    background: var(--ff-surface-sunken);
+    font-size: 13px;
+}
+
+.ff-chip-x {
+    display: inline-grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--ff-text-2);
+}
+
+.ff-chip-x:hover {
+    background: var(--ff-neg-soft);
+    color: var(--ff-neg);
+}
+
+.ff-employer-add {
+    display: flex;
+    gap: 8px;
+    max-width: 420px;
+}
+
+.ff-employer-add .form-control {
+    min-width: 0;
+}
+
+.ff-employer-add .btn {
+    white-space: nowrap;
+}
+
+.ff-employer-status {
+    min-height: 1.3em;
+    margin: 8px 0 0;
+    font-size: 12.5px;
+    color: var(--ff-text-2);
+}
+
+.ff-employer-status:empty {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+@media (max-width: 767.98px) {
+    .ff-employer-add {
+        max-width: none;
+    }
+}

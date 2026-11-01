@@ -183,6 +183,14 @@ Route::group(
     }
 );
 
+// custom: Firefly III Custom pages (app/Http/Controllers/Custom).
+Route::group(
+    ['middleware' => ['user-full-auth'], 'namespace' => 'FireflyIII\Http\Controllers\Custom'],
+    static function (): void {
+        Route::get('employer', ['uses' => 'EmployerController@index', 'as' => 'employer.index']);
+    }
+);
+
 // show inactive
 
 /*

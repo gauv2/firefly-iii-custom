@@ -109,6 +109,12 @@
             <p>{{ __('firefly.reports') }}</p>
         </a>
     </li>
+    <li class="nav-item">
+        <a href="{{ route('employer.index') }}" class="nav-link {{ \FireflyIII\Support\Blade\Navigation::menuItemActive('employer.index') }}">
+            <em class="nav-icon bi bi-briefcase"></em>
+            <p>Employer</p>
+        </a>
+    </li>
     <li class="nav-item {{ menu_open_partial('categories.') }} {{ menu_open_partial('tags.') }} {{ menu_open_partial('object-groups.') }}">
         <a href="#" class="nav-link">
             <em class="nav-icon bi bi-tags"></em>
