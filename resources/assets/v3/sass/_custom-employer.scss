@@ -52,6 +52,12 @@
     font-size: 12px;
 }
 
+.ff-note-line {
+    display: block;
+    font-size: 12px;
+    line-height: 1.2;
+}
+
 // tables
 .ff-table-scroll {
     overflow-x: auto;
@@ -109,7 +115,7 @@
     box-shadow: 1px 0 0 var(--ff-border);
 }
 
-.ff-sticky-first .ff-strong > * {
+.ff-sticky-first > * > tr.ff-strong > * {
     background: var(--ff-accent-soft);
 }
 
@@ -181,9 +187,9 @@
     color: var(--ff-text-2);
 }
 
-.ff-employer-status:empty {
+.ff-employer-status.ff-card-b {
+    margin: 0;
     padding-top: 0;
-    padding-bottom: 0;
 }
 
 @media (max-width: 767.98px) {

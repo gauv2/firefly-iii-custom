@@ -328,7 +328,7 @@ function renderMobility() {
             const paidCell =
                 paid.amount === null
                     ? `<span class="ff-muted">On the ${esc(monthName(paid.payout, "long"))} payslip</span>`
-                    : money(paid.amount) + (paid.from === "payslip" ? ` <span class="ff-muted ff-small">from the ${esc(monthName(shiftMonth(m, 1)))} payslip</span>` : "");
+                    : money(paid.amount) + (paid.from === "payslip" ? `<span class="ff-muted ff-note-line">from the ${esc(monthName(shiftMonth(m, 1)))} payslip</span>` : "");
             let fuelCell;
             if (spent <= 0) {
                 fuelCell = '<span class="ff-muted">No fuel spend</span>';
@@ -351,7 +351,7 @@ function renderMobility() {
     fill(
         "mobility",
         `<div class="ff-table-scroll" tabindex="0" role="region" aria-labelledby="ff-h-mobility">
-            <table class="table ff-employer-table">
+            <table class="table ff-employer-table ff-sticky-first">
                 <thead><tr><th scope="col">Month</th><th scope="col" class="ff-num">Paid out (tax-free)</th><th scope="col" class="ff-num">Fuel covered</th><th scope="col" class="ff-num">Km driven</th><th scope="col" class="ff-num">Reimbursed</th><th scope="col" class="ff-num">Transfer to joint account</th></tr></thead>
                 <tbody>${body}</tbody>
             </table>
