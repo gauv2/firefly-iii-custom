@@ -31,6 +31,7 @@
     align-items: center;
     gap: 4px;
     min-width: 0;
+    flex: 0 1 auto;
 }
 
 // period switcher
@@ -38,6 +39,7 @@
     display: flex;
     align-items: center;
     gap: 2px;
+    min-width: 0;
 }
 
 .ff-icon-btn {
@@ -63,6 +65,8 @@
     color: var(--ff-text-1);
     gap: 6px;
     white-space: nowrap;
+    min-width: 0;
+    overflow: hidden;
 }
 
 .ff-period-label .ff-period-caret {
@@ -78,7 +82,14 @@
     display: none;
 }
 .ff-period.ff-period-ready .ff-period-pretty {
-    display: inline;
+    display: block;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ff-period-label .ff-period-caret {
+    flex: none;
 }
 
 // search
