@@ -17,6 +17,7 @@ goes through upstream's API. The API and the database schema are upstream's.
 | Shell: top bar, period switcher, search, "Add transaction", phone tab bar | `_custom-shell.scss`, `js/custom/shell.js`, `views/layout/v3/session.blade.php`, `views/components/layout/{sidebar,range,create-menu,user-menu}.blade.php` |
 | Home page | `views/index.blade.php`, `js/custom/home.js`, `_custom-home.scss` |
 | Employer page (payslips, expensing, mobility budget; data in the `customEmployer` preference) | `routes/web.php` (custom: group), `app/Http/Controllers/Custom/EmployerController.php`, `views/custom/employer.blade.php`, `js/custom/employer.js`, `_custom-employer.scss`, a sidebar link |
+| Scan page: photos and PDFs of receipts and invoices are read by the scan service (GauravVPS `firefly/scan`), matched, and attached to a transaction or a new one tagged `receipt`; possible duplicates with bank imports are listed for a manual merge | `routes/web.php`, `app/Http/Controllers/Custom/ScanController.php`, `views/custom/scan.blade.php`, `js/custom/scan.js`, `_custom-scan.scss`, the add menu and the phone tab bar |
 | Name and icons: "Finance" in titles, sidebar, error and login pages and the web manifest; a new mark replacing the flame (the footer keeps Firefly III's notice) | `views/layout/v3/*.blade.php`, `views/components/layout/fav-icons*.blade.php`, `custom/brand/` (SVG sources, rendered into `public/` by the image build) |
 | Image | `custom/Dockerfile` |
 

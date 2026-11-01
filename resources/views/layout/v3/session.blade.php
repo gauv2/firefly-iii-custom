@@ -354,8 +354,9 @@
         <a href="{{ route('budgets.index') }}" @if(str_starts_with((string) Route::currentRouteName(), 'budgets.')) aria-current="page" @endif>
             <em class="bi bi-pie-chart" aria-hidden="true"></em><span>Budgets</span>
         </a>
-        <a href="{{ route('subscriptions.index') }}" @if(str_starts_with((string) Route::currentRouteName(), 'subscriptions.')) aria-current="page" @endif>
-            <em class="bi bi-arrow-repeat" aria-hidden="true"></em><span>Subs</span>
+        {{-- custom: Scan replaces Subs here; Subscriptions stays in the menu --}}
+        <a href="{{ route('scan.index') }}" @if(str_starts_with((string) Route::currentRouteName(), 'scan.')) aria-current="page" @endif>
+            <em class="bi bi-camera" aria-hidden="true"></em><span>Scan</span>
         </a>
     </nav>
 </div>

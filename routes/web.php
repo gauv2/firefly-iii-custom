@@ -188,6 +188,8 @@ Route::group(
     ['middleware' => ['user-full-auth'], 'namespace' => 'FireflyIII\Http\Controllers\Custom'],
     static function (): void {
         Route::get('employer', ['uses' => 'EmployerController@index', 'as' => 'employer.index']);
+        Route::get('scan', ['uses' => 'ScanController@index', 'as' => 'scan.index']);
+        Route::post('scan/extract', ['uses' => 'ScanController@extract', 'as' => 'scan.extract']);
     }
 );
 

@@ -1,0 +1,332 @@
+/*
+ * _custom-scan.scss
+ * Firefly III Custom: the Scan page (custom/scan.blade.php + js/custom/scan.js).
+ * Shares cards with _custom-home.scss and help/status text with _custom-employer.scss.
+ */
+
+.ff-scan-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.ff-scan-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    padding-inline: 18px;
+}
+
+.ff-scan-btn:focus-within {
+    outline: 2px solid var(--ff-focus);
+    outline-offset: 2px;
+}
+
+.ff-scan-drop {
+    margin: 10px 0 0;
+    font-size: 12.5px;
+    color: var(--ff-text-3);
+}
+
+.ff-scan-start.ff-dragging {
+    outline: 2px dashed var(--ff-accent);
+    outline-offset: -6px;
+}
+
+.ff-scan-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.ff-scan-list:empty {
+    display: none;
+}
+
+.ff-scan-item {
+    padding: 14px 16px 16px;
+}
+
+.ff-scan-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ff-scan-thumb {
+    flex: none;
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--ff-surface-sunken);
+    display: grid;
+    place-items: center;
+    color: var(--ff-text-2);
+    font-size: 24px;
+}
+
+.ff-scan-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.ff-scan-title {
+    flex: 1;
+    min-width: 0;
+}
+
+.ff-scan-title h2 {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ff-scan-state {
+    margin: 2px 0 0;
+    font-size: 13px;
+    color: var(--ff-text-2);
+}
+
+.ff-scan-state[data-kind="busy"]::before {
+    content: "";
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin-right: 6px;
+    border: 2px solid var(--ff-border-strong);
+    border-top-color: var(--ff-accent);
+    border-radius: 50%;
+    animation: ff-spin 0.8s linear infinite;
+    vertical-align: -1px;
+}
+
+.ff-scan-state[data-kind="error"] {
+    color: var(--ff-neg);
+}
+
+.ff-scan-state[data-kind="warn"] {
+    color: var(--ff-warn);
+}
+
+.ff-scan-state[data-kind="done"] {
+    color: var(--ff-pos);
+    font-weight: 500;
+}
+
+@keyframes ff-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ff-scan-state[data-kind="busy"]::before {
+        animation: none;
+    }
+}
+
+.ff-scan-remove {
+    flex: none;
+    min-height: 32px;
+    color: var(--ff-text-2);
+}
+
+.ff-scan-form {
+    margin-top: 14px;
+}
+
+.ff-scan-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.ff-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 0;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--ff-text-2);
+}
+
+.ff-field-wide {
+    grid-column: 1 / -1;
+}
+
+.ff-field .form-control,
+.ff-field .form-select {
+    min-height: 40px;
+}
+
+.ff-field :disabled {
+    opacity: 0.6;
+}
+
+.ff-scan-matches {
+    margin: 16px 0 0;
+    padding: 0;
+    border: 0;
+}
+
+.ff-scan-matches legend {
+    font-size: 13.5px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.ff-scan-found {
+    margin: 0 0 8px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    background: var(--ff-warn-soft);
+    color: var(--ff-text-1);
+    font-size: 13px;
+}
+
+.ff-match {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    padding: 10px;
+    border: 1px solid var(--ff-border);
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.ff-match + .ff-match {
+    margin-top: 6px;
+}
+
+.ff-match:has(input:checked) {
+    border-color: var(--ff-accent);
+    background: var(--ff-accent-soft);
+}
+
+.ff-match input {
+    flex: none;
+    width: 18px;
+    height: 18px;
+}
+
+.ff-match > span:not(.ff-match-amt) {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.ff-match b {
+    font-weight: 600;
+}
+
+.ff-match small {
+    color: var(--ff-text-2);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ff-match-amt {
+    flex: none;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.ff-scan-submit {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin-top: 14px;
+}
+
+.ff-scan-submit .btn {
+    min-height: 44px;
+}
+
+.ff-scan-error {
+    color: var(--ff-neg);
+    font-size: 13px;
+}
+
+// possible duplicates
+.ff-dupe {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--ff-border);
+}
+
+.ff-dupe-pair {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.ff-dupe-side {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.ff-dupe-side small {
+    color: var(--ff-text-2);
+}
+
+.ff-dupe-label {
+    font-size: 11.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--ff-text-3);
+}
+
+.ff-dupe-amt {
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.ff-dupe-acts {
+    display: flex;
+    gap: 8px;
+}
+
+.ff-dupe-acts .btn {
+    min-height: 36px;
+}
+
+@media (max-width: 767.98px) {
+    .ff-scan-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .ff-scan-btn {
+        flex: 1 1 100%;
+        justify-content: center;
+    }
+
+    .ff-dupe {
+        grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .ff-dupe-pair {
+        grid-template-columns: minmax(0, 1fr);
+        grid-column: 1 / -1;
+    }
+
+    .ff-dupe-acts {
+        grid-column: 1 / -1;
+    }
+}

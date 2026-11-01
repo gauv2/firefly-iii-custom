@@ -8,6 +8,18 @@
     </a>
     <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" id="create-menu" data-bs-toggle="dropdown" aria-expanded="false" aria-label="More things to create"></button>
     <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
+        {{-- custom: scan a receipt or invoice --}}
+        <a href="{{ route('scan.index') }}" class="dropdown-item">
+            <div class="d-flex">
+                <div class="grow">
+                    <h3 class="dropdown-item-title">
+                        <em class="bi bi-camera me-2"></em>
+                        Scan a receipt or invoice
+                    </h3>
+                </div>
+            </div>
+        </a>
+        <div class="dropdown-divider"></div>
 
 
 
