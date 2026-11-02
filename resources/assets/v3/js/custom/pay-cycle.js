@@ -109,7 +109,8 @@ async function loadDeposits() {
         // no payslips
     }
     const ew = words(employer);
-    const score = (s) => s.months + (ew.size && [...words(s.name)].some((w) => ew.has(w)) ? 6 : 0);
+    // the payslip's employer wins only when it actually pays regularly (a one-off refund from it does not count)
+    const score = (s) => s.months + (s.months >= 2 && ew.size && [...words(s.name)].some((w) => ew.has(w)) ? 6 : 0);
     source = sources.find((s) => s.name === prefs.source)?.name ?? [...sources].sort((a, b) => score(b) - score(a))[0]?.name ?? null;
     pays = payDates(deposits.filter((d) => d.name === source));
 }
