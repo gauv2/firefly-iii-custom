@@ -1,0 +1,215 @@
+/*
+ * _custom-cycle.scss
+ * Firefly III Custom: the Month / Pay cycle switch on the budget pages and the pay-cycle view
+ * (custom/pay-cycle.blade.php + js/custom/pay-cycle.js).
+ */
+
+.ff-budget-mode {
+    display: inline-flex;
+    gap: 2px;
+    padding: 3px;
+    margin-bottom: 12px;
+    border-radius: 10px;
+    background: var(--ff-surface-sunken);
+}
+
+.ff-budget-mode a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+    padding: 0 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ff-text-2);
+    text-decoration: none;
+}
+
+.ff-budget-mode a[aria-current="page"] {
+    background: var(--ff-surface-raised);
+    color: var(--ff-text-1);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 15%);
+}
+
+.ff-budget-mode a:focus-visible {
+    outline: 2px solid var(--ff-focus);
+    outline-offset: 1px;
+}
+
+.ff-cycle-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ff-cycle-head .btn {
+    min-width: 44px;
+    min-height: 44px;
+}
+
+.ff-cycle-title {
+    flex: 1;
+    min-width: 0;
+    text-align: center;
+}
+
+.ff-cycle-title h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.ff-cycle-title p {
+    margin: 4px 0 0;
+    font-size: 13px;
+    color: var(--ff-text-2);
+}
+
+.ff-cycle-tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.ff-cycle-tile {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: var(--ff-surface-sunken);
+}
+
+.ff-cycle-tile span {
+    font-size: 12px;
+    color: var(--ff-text-2);
+}
+
+.ff-cycle-tile b {
+    font-size: 17px;
+    font-variant-numeric: tabular-nums;
+}
+
+.ff-cycle-tile[data-neg] b,
+.ff-cycle-fig b[data-neg] {
+    color: var(--ff-neg);
+}
+
+.ff-cycle-rows {
+    display: flex;
+    flex-direction: column;
+}
+
+.ff-cycle-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) 110px minmax(0, 1.4fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--ff-border);
+}
+
+.ff-cycle-name {
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ff-cycle-amount input {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.ff-cycle-bar {
+    height: 8px;
+    border-radius: 999px;
+    background: var(--ff-surface-sunken);
+    overflow: hidden;
+}
+
+.ff-cycle-bar i {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--ff-accent);
+}
+
+.ff-cycle-bar i[data-over] {
+    background: var(--ff-neg);
+}
+
+.ff-cycle-fig {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+}
+
+.ff-cycle-fig span {
+    color: var(--ff-text-2);
+}
+
+.ff-cycle-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.ff-cycle-source {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-width: 420px;
+    margin-bottom: 12px;
+}
+
+.ff-cycle-source span {
+    font-size: 13px;
+    color: var(--ff-text-2);
+}
+
+.ff-cycle-pays {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.ff-cycle-pays li {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--ff-border);
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+}
+
+.ff-cycle-pays small {
+    color: var(--ff-text-3);
+}
+
+@media (max-width: 767.98px) {
+    .ff-cycle-row {
+        grid-template-columns: minmax(0, 1fr) 100px;
+        gap: 6px 12px;
+    }
+
+    .ff-cycle-bar,
+    .ff-cycle-fig {
+        grid-column: 1 / -1;
+    }
+
+    .ff-cycle-fig {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .ff-cycle-title h2 {
+        font-size: 17px;
+    }
+}

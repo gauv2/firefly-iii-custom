@@ -191,6 +191,9 @@ Route::group(
         Route::get('scan', ['uses' => 'ScanController@index', 'as' => 'scan.index']);
         Route::post('scan/extract', ['uses' => 'ScanController@extract', 'as' => 'scan.extract']);
         Route::get('import', ['uses' => 'ImportController@index', 'as' => 'import.index']);
+        // registered before the budgets group, so "budgets/pay-cycle" never reads as a date
+        Route::get('budgets/home', ['uses' => 'PayCycleController@home', 'as' => 'budgets.home']);
+        Route::get('budgets/pay-cycle', ['uses' => 'PayCycleController@index', 'as' => 'budgets.cycle']);
     }
 );
 

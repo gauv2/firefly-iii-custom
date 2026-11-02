@@ -46,6 +46,7 @@ export default defineConfig(({ command }) => {
                     "js/custom/employer.js",
                     "js/custom/scan.js",
                     "js/custom/import.js",
+                    "js/custom/pay-cycle.js",
 
                     // dashboard
                     "js/pages/dashboard/boxes.js",

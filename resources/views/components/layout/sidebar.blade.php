@@ -52,7 +52,7 @@
         </ul>
     </li>
     <li class="nav-item">
-        <a href="{{ route('budgets.index') }}" class="nav-link {{ menu_item_active_partial('budgets.') }}">
+        <a href="{{ route('budgets.home') }}" class="nav-link {{ menu_item_active_partial('budgets.') }}">
             <em class="nav-icon bi bi-pie-chart"></em>
             <p>{{ __('firefly.budgets') }}</p>
         </a>

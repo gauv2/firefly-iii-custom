@@ -351,7 +351,7 @@
         <a href="{{ route('transactions.create', ['withdrawal']) }}" class="ff-tab-add" aria-label="Add transaction" data-ff-add>
             <span class="ff-fab"><em class="bi bi-plus-lg" aria-hidden="true"></em></span>
         </a>
-        <a href="{{ route('budgets.index') }}" @if(str_starts_with((string) Route::currentRouteName(), 'budgets.')) aria-current="page" @endif>
+        <a href="{{ route('budgets.home') }}" @if(str_starts_with((string) Route::currentRouteName(), 'budgets.')) aria-current="page" @endif>
             <em class="bi bi-pie-chart" aria-hidden="true"></em><span>Budgets</span>
         </a>
         {{-- custom: Scan replaces Subs here; Subscriptions stays in the menu --}}
