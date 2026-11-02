@@ -115,12 +115,6 @@
             <p>Employer</p>
         </a>
     </li>
-    <li class="nav-item">
-        <a href="{{ route('import.index') }}" class="nav-link {{ \FireflyIII\Support\Blade\Navigation::menuItemActive('import.index') }}">
-            <em class="nav-icon bi bi-upload"></em>
-            <p>Import</p>
-        </a>
-    </li>
     <li class="nav-item {{ menu_open_partial('categories.') }} {{ menu_open_partial('tags.') }} {{ menu_open_partial('object-groups.') }}">
         <a href="#" class="nav-link">
             <em class="nav-icon bi bi-tags"></em>
