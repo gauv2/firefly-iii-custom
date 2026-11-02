@@ -134,8 +134,15 @@ async function loadBudgets() {
             .filter((b) => b.attributes.active !== false)
             .map(async (b) => {
                 const limits = (await api("GET", `api/v1/budgets/${b.id}/limits?start=${from}&end=${to}`)).data
-                    .filter((l) => String(l.attributes.notes ?? "").trim() === MARK)
-                    .map((l) => ({ id: l.id, start: l.attributes.start.substring(0, 10), end: l.attributes.end.substring(0, 10), amount: num(l.attributes.amount) }));
+                    .map((l) => ({ l, note: String(l.attributes.notes ?? "").trim().split("\n") }))
+                    .filter(({ note }) => note[0].trim() === MARK)
+                    .map(({ l, note }) => ({
+                        id: l.id,
+                        start: l.attributes.start.substring(0, 10),
+                        end: l.attributes.end.substring(0, 10),
+                        amount: num(l.attributes.amount),
+                        carry: num(/^carry:\s*(-?[\d.]+)/m.exec(note.slice(1).join("\n"))?.[1]), // carried in from the last cycle
+                    }));
                 const spent = (b.attributes.spent ?? []).reduce((s, x) => s + Math.abs(num(x.sum)), 0);
                 return { id: b.id, name: b.attributes.name, spent, limits };
             }),
@@ -158,33 +165,60 @@ async function syncLimits() {
     return moved;
 }
 
-async function setAmount(b, c, amount) {
+// ---------- carry-over ----------
+// Per budget, like Firefly's auto-budget kinds: "same" (reset), "rollover" (leftover and overspending
+// both move to the next cycle) or "overspend" (only overspending is taken off the next cycle).
+const CARRY = { same: "Same amount every cycle", rollover: "Carry leftover and overspending", overspend: "Deduct overspending only" };
+const carryMode = (b) => (CARRY[prefs.carry?.[b.id]] ? prefs.carry[b.id] : "same");
+const baseOf = (l) => (l ? Math.round((l.amount - l.carry) * 100) / 100 : 0);
+
+/**
+ * Sets a budget's amount in cycle `c`: its base amount plus what was carried in. Firefly only stores
+ * amounts above zero, so a cycle wiped out by overspending keeps 0.01 (shown as nothing left); the
+ * carry recorded in the note is what was really applied, so the base never drifts.
+ */
+async function setAmount(b, c, base, carry = limitFor(b, c)?.carry ?? 0) {
     const l = limitFor(b, c);
-    if (!amount) {
+    if (!base) {
         if (l) {
             await api("DELETE", `api/v1/budgets/${b.id}/limits/${l.id}`);
             b.limits = b.limits.filter((x) => x !== l);
         }
         return;
     }
+    const amount = Math.max(0.01, Math.round((base + carry) * 100) / 100);
+    const applied = Math.round((amount - base) * 100) / 100;
+    const notes = applied ? `${MARK}\ncarry: ${applied.toFixed(2)}` : MARK;
     if (l) {
-        await api("PUT", `api/v1/budgets/${b.id}/limits/${l.id}`, { amount: amount.toFixed(2), fire_webhooks: false });
-        l.amount = amount;
+        await api("PUT", `api/v1/budgets/${b.id}/limits/${l.id}`, { amount: amount.toFixed(2), notes, fire_webhooks: false });
+        Object.assign(l, { amount, carry: applied });
     } else {
-        const res = await api("POST", `api/v1/budgets/${b.id}/limits`, { start: c.start, end: c.end, amount: amount.toFixed(2), notes: MARK, fire_webhooks: false });
-        b.limits.push({ id: res.data.id, start: c.start, end: c.end, amount });
+        const res = await api("POST", `api/v1/budgets/${b.id}/limits`, { start: c.start, end: c.end, amount: amount.toFixed(2), notes, fire_webhooks: false });
+        b.limits.push({ id: res.data.id, start: c.start, end: c.end, amount, carry: applied });
     }
 }
 
-/** Copies the previous cycle's amounts into cycle `c` for budgets that have none there. */
+/** Starts cycle `c` from the previous cycle: the same base amounts, plus or minus what carries over. */
 async function copyLast(c, prev) {
+    if (!prev) {
+        return 0;
+    }
+    let spentBefore = null;
     let n = 0;
     for (const b of budgets) {
-        const from = prev && limitFor(b, prev);
-        if (from && !limitFor(b, c)) {
-            await setAmount(b, c, from.amount);
-            n++;
+        const from = limitFor(b, prev);
+        if (!from || limitFor(b, c)) {
+            continue;
         }
+        let carry = 0;
+        const mode = carryMode(b);
+        if (mode !== "same") {
+            spentBefore ??= new Map((await all(`api/v1/budgets?start=${prev.start}&end=${prev.end}`)).map((x) => [x.id, (x.attributes.spent ?? []).reduce((s, y) => s + Math.abs(num(y.sum)), 0)]));
+            const rest = (from.amount <= 0.01 ? 0 : from.amount) - (spentBefore.get(b.id) ?? 0);
+            carry = mode === "rollover" ? rest : Math.min(0, rest);
+        }
+        await setAmount(b, c, baseOf(from), Math.round(carry * 100) / 100);
+        n++;
     }
     return n;
 }
@@ -212,7 +246,7 @@ function render(noBudget, note) {
     $('[data-act="next"]').disabled = at >= cycles.length - 1;
 
     const rows = budgets.map((b) => ({ b, l: limitFor(b, c) }));
-    const budgeted = rows.reduce((s, r) => s + (r.l?.amount ?? 0), 0);
+    const budgeted = rows.reduce((s, r) => s + (r.l && r.l.amount > 0.01 ? r.l.amount : 0), 0);
     const spent = rows.reduce((s, r) => s + (r.l ? r.b.spent : 0), 0);
     const left = budgeted - spent;
     const daysLeft = current ? daysBetween(now, c.end) + 1 : 0;
@@ -237,14 +271,21 @@ function render(noBudget, note) {
             ? `<div class="ff-cycle-rows">${rows
                   .sort((x, y) => (y.l ? 1 : 0) - (x.l ? 1 : 0) || y.b.spent - x.b.spent)
                   .map(({ b, l }) => {
-                      const amount = l?.amount ?? 0;
+                      const amount = l && l.amount > 0.01 ? l.amount : 0; // 0.01: wiped out by carried overspending
                       // without an amount there is nothing to be over: an empty bar and no red
-                      const pct = amount > 0 ? Math.min(100, (b.spent / amount) * 100) : 0;
+                      const pct = amount > 0 ? Math.min(100, (b.spent / amount) * 100) : l && b.spent > 0 ? 100 : 0;
                       const rest = l ? amount - b.spent : 0;
+                      const mode = carryMode(b);
+                      const carried = l?.carry
+                          ? `<small class="ff-cycle-carry" data-sign="${l.carry < 0 ? "neg" : "pos"}">${l.carry < 0 ? "−" : "+"}${money(Math.abs(l.carry))} ${l.carry < 0 ? "overspent last cycle" : "carried over"} · ${money(amount)} to spend</small>`
+                          : "";
                       return `<div class="ff-cycle-row" data-id="${esc(b.id)}">
-                        <a class="ff-cycle-name" href="${esc(urlBudget(b.id))}">${esc(b.name)}</a>
-                        <label class="ff-cycle-amount"><span class="visually-hidden">Amount for ${esc(b.name)} this cycle</span>
-                            <input class="form-control form-control-sm" type="number" min="0" step="1" inputmode="decimal" value="${l ? esc(amount.toFixed(2)) : ""}" placeholder="–" data-amount></label>
+                        <div class="ff-cycle-name"><a href="${esc(urlBudget(b.id))}">${esc(b.name)}</a>
+                            <select class="form-select form-select-sm ff-cycle-mode" data-carry aria-label="What happens to ${esc(b.name)}'s leftover or overspending">
+                                ${Object.entries(CARRY).map(([k, v]) => `<option value="${k}"${k === mode ? " selected" : ""}>${v}</option>`).join("")}
+                            </select></div>
+                        <label class="ff-cycle-amount"><span class="visually-hidden">Amount for ${esc(b.name)} every cycle</span>
+                            <input class="form-control form-control-sm" type="number" min="0" step="1" inputmode="decimal" value="${l ? esc(baseOf(l).toFixed(2)) : ""}" placeholder="–" data-amount>${carried}</label>
                         <div class="ff-cycle-bar" aria-hidden="true"><i style="width:${pct.toFixed(1)}%"${rest < 0 ? ' data-over="1"' : ""}></i></div>
                         <div class="ff-cycle-fig"><span>${money(b.spent)} spent</span><b${rest < 0 ? ' data-neg="1"' : ""}>${l ? `${money(Math.abs(rest))} ${rest < 0 ? "over" : "left"}` : "no amount"}</b></div>
                     </div>`;
@@ -365,6 +406,16 @@ function bind() {
                 console.error("pay-cycle: amount", e);
                 status.textContent = `${b.name} could not be saved: ${e.message}`;
                 ev.target.disabled = false;
+            }
+        } else if (ev.target.matches("[data-carry]")) {
+            const b = budgets.find((x) => x.id === ev.target.closest("[data-id]").dataset.id);
+            prefs.carry = { ...(prefs.carry ?? {}), [b.id]: ev.target.value };
+            try {
+                await api("POST", "api/v1/preferences", { name: PREF, data: prefs });
+                status.textContent = `${b.name}: ${CARRY[ev.target.value].toLowerCase()}, from the next cycle on.`;
+            } catch (e) {
+                console.error("pay-cycle: save carry", e);
+                status.textContent = `${b.name}'s choice could not be saved. Reload and try again.`;
             }
         } else if (ev.target.matches('[data-fill="source"]')) {
             source = ev.target.value;
