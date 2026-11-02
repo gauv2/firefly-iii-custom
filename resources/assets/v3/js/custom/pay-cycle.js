@@ -238,8 +238,9 @@ function render(noBudget, note) {
                   .sort((x, y) => (y.l ? 1 : 0) - (x.l ? 1 : 0) || y.b.spent - x.b.spent)
                   .map(({ b, l }) => {
                       const amount = l?.amount ?? 0;
-                      const pct = amount > 0 ? Math.min(100, (b.spent / amount) * 100) : b.spent > 0 ? 100 : 0;
-                      const rest = amount - b.spent;
+                      // without an amount there is nothing to be over: an empty bar and no red
+                      const pct = amount > 0 ? Math.min(100, (b.spent / amount) * 100) : 0;
+                      const rest = l ? amount - b.spent : 0;
                       return `<div class="ff-cycle-row" data-id="${esc(b.id)}">
                         <a class="ff-cycle-name" href="${esc(urlBudget(b.id))}">${esc(b.name)}</a>
                         <label class="ff-cycle-amount"><span class="visually-hidden">Amount for ${esc(b.name)} this cycle</span>
