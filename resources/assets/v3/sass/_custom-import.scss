@@ -1,0 +1,184 @@
+/*
+ * _custom-import.scss
+ * Firefly III Custom: the Import page (custom/import.blade.php + js/custom/import.js).
+ * Reuses the Scan page's start card, buttons and error text (_custom-scan.scss).
+ */
+
+.ff-import-acct {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-width: 520px;
+    margin-bottom: 10px;
+}
+
+.ff-import-acct span {
+    font-size: 13px;
+    color: var(--ff-text-2);
+    overflow-wrap: anywhere;
+}
+
+.ff-import-filters,
+.ff-import-bulk {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.ff-import-filters .btn span {
+    opacity: 0.75;
+    font-variant-numeric: tabular-nums;
+}
+
+.ff-import-bulk {
+    font-size: 13px;
+    color: var(--ff-text-2);
+}
+
+.ff-import-bulk:empty {
+    display: none;
+}
+
+.ff-import-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 8px 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--ff-border);
+}
+
+.ff-import-main {
+    display: grid;
+    grid-template-columns: 92px minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: 10px;
+}
+
+.ff-import-when {
+    font-size: 13px;
+    color: var(--ff-text-2);
+    font-variant-numeric: tabular-nums;
+}
+
+.ff-import-who {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.ff-import-who b,
+.ff-import-who small {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ff-import-who small,
+.ff-import-match small {
+    color: var(--ff-text-2);
+}
+
+.ff-import-amt {
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.ff-import-amt[data-dir="in"] {
+    color: var(--ff-pos);
+}
+
+.ff-import-side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    min-width: 0;
+}
+
+.ff-import-chip {
+    font-size: 11.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--ff-surface-sunken);
+    color: var(--ff-text-2);
+}
+
+.ff-import-chip[data-status="dupe"] {
+    background: var(--ff-accent-soft);
+    color: var(--ff-warn);
+}
+
+.ff-import-chip[data-status="done"] {
+    color: var(--ff-pos);
+}
+
+.ff-import-chip[data-status="failed"] {
+    color: var(--ff-neg);
+}
+
+.ff-import-match {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    font-size: 13.5px;
+}
+
+.ff-import-opts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+}
+
+.ff-import-opt {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 32px;
+    font-size: 13.5px;
+    cursor: pointer;
+}
+
+.ff-import-done {
+    font-size: 13.5px;
+    color: var(--ff-pos);
+}
+
+.ff-import-go {
+    position: sticky;
+    bottom: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0 4px;
+    background: var(--ff-surface-raised);
+}
+
+.ff-import-go .btn {
+    min-height: 44px;
+    padding-inline: 22px;
+}
+
+@media (max-width: 767.98px) {
+    .ff-import-row {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .ff-import-main {
+        grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .ff-import-when {
+        grid-column: 1 / -1;
+    }
+
+    .ff-import-go {
+        bottom: 64px; // above the tab bar
+    }
+}

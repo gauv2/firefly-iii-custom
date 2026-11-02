@@ -190,6 +190,7 @@ Route::group(
         Route::get('employer', ['uses' => 'EmployerController@index', 'as' => 'employer.index']);
         Route::get('scan', ['uses' => 'ScanController@index', 'as' => 'scan.index']);
         Route::post('scan/extract', ['uses' => 'ScanController@extract', 'as' => 'scan.extract']);
+        Route::get('import', ['uses' => 'ImportController@index', 'as' => 'import.index']);
     }
 );
 

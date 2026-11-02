@@ -45,6 +45,7 @@ export default defineConfig(({ command }) => {
                     "js/custom/home.js",
                     "js/custom/employer.js",
                     "js/custom/scan.js",
+                    "js/custom/import.js",
 
                     // dashboard
                     "js/pages/dashboard/boxes.js",

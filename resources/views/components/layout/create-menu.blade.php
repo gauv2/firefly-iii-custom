@@ -19,6 +19,17 @@
                 </div>
             </div>
         </a>
+        {{-- custom: import a bank statement --}}
+        <a href="{{ route('import.index') }}" class="dropdown-item">
+            <div class="d-flex">
+                <div class="grow">
+                    <h3 class="dropdown-item-title">
+                        <em class="bi bi-upload me-2"></em>
+                        Import a bank statement
+                    </h3>
+                </div>
+            </div>
+        </a>
         <div class="dropdown-divider"></div>
 
 
