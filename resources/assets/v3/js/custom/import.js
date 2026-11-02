@@ -35,6 +35,7 @@ let filter = "all";
 let shown = PAGE_ROWS;
 let busy = false;
 let hidden = false;
+let lastResult = ""; // "Imported 12." stays under the button until the next file
 
 // ---------- helpers ----------
 const csrf = () => document.querySelector('meta[name="csrf-token"]')?.content ?? "";
@@ -124,6 +125,7 @@ async function readFile(file) {
     const status = $('[data-fill="file-status"]');
     status.textContent = `Reading ${file.name}…`;
     $('[data-fill="review-card"]').hidden = true;
+    lastResult = "";
     try {
         const buf = await file.arrayBuffer();
         let text = new TextDecoder("utf-8", { fatal: false }).decode(buf);
@@ -304,7 +306,7 @@ function render() {
     go.disabled = busy || c.open > 0 || c.go === 0;
     go.textContent = c.go ? `Import ${c.go}` : "Import";
     if (!busy) {
-        $('[data-fill="go-status"]').textContent = c.open ? `Choose what to do with ${c.open} possible duplicate${c.open === 1 ? "" : "s"} first.` : "";
+        $('[data-fill="go-status"]').textContent = c.open ? `Choose what to do with ${c.open} possible duplicate${c.open === 1 ? "" : "s"} first.` : lastResult;
     }
 }
 
@@ -380,8 +382,8 @@ async function runImport() {
         }
     }
     busy = false;
+    lastResult = `Imported ${ok}${failed ? `; ${failed} failed (shown with the reason)` : ""}.`;
     render();
-    status.textContent = `Imported ${ok}${failed ? `; ${failed} failed (shown with the reason)` : ""}.`;
 }
 
 // ---------- events ----------
