@@ -141,7 +141,9 @@ async function loadBudgets() {
                         start: l.attributes.start.substring(0, 10),
                         end: l.attributes.end.substring(0, 10),
                         amount: num(l.attributes.amount),
-                        carry: num(/^carry:\s*(-?[\d.]+)/m.exec(note.slice(1).join("\n"))?.[1]), // carried in from the last cycle
+                        // the budget's own amount and what was carried in from the last cycle (see setAmount)
+                        base: /^base:\s*(-?[\d.]+)/m.test(note.join("\n")) ? num(/^base:\s*(-?[\d.]+)/m.exec(note.join("\n"))[1]) : num(l.attributes.amount),
+                        carry: num(/^carry:\s*(-?[\d.]+)/m.exec(note.join("\n"))?.[1]),
                     }));
                 const spent = (b.attributes.spent ?? []).reduce((s, x) => s + Math.abs(num(x.sum)), 0);
                 return { id: b.id, name: b.attributes.name, spent, limits };
@@ -170,12 +172,16 @@ async function syncLimits() {
 // both move to the next cycle) or "overspend" (only overspending is taken off the next cycle).
 const CARRY = { same: "Same amount every cycle", rollover: "Carry leftover and overspending", overspend: "Deduct overspending only" };
 const carryMode = (b) => (CARRY[prefs.carry?.[b.id]] ? prefs.carry[b.id] : "same");
-const baseOf = (l) => (l ? Math.round((l.amount - l.carry) * 100) / 100 : 0);
+const r2 = (n) => Math.round(n * 100) / 100;
+const baseOf = (l) => (l ? l.base : 0);
+/** What there is to spend in a cycle: base plus carry, which can be below zero after heavy overspending. */
+const budgetOf = (l) => (l ? r2(l.base + l.carry) : 0);
 
 /**
- * Sets a budget's amount in cycle `c`: its base amount plus what was carried in. Firefly only stores
- * amounts above zero, so a cycle wiped out by overspending keeps 0.01 (shown as nothing left); the
- * carry recorded in the note is what was really applied, so the base never drifts.
+ * Sets a budget's amount in cycle `c`: its base amount plus what was carried in. Both are kept in the
+ * limit's note ("pay-cycle", "base: 400.00", "carry: -479.49"), so the base never drifts and a carry
+ * larger than the base keeps counting. Firefly only stores amounts above zero, so a cycle wiped out by
+ * overspending is stored as 0.01 and shown as nothing to spend.
  */
 async function setAmount(b, c, base, carry = limitFor(b, c)?.carry ?? 0) {
     const l = limitFor(b, c);
@@ -186,15 +192,16 @@ async function setAmount(b, c, base, carry = limitFor(b, c)?.carry ?? 0) {
         }
         return;
     }
-    const amount = Math.max(0.01, Math.round((base + carry) * 100) / 100);
-    const applied = Math.round((amount - base) * 100) / 100;
-    const notes = applied ? `${MARK}\ncarry: ${applied.toFixed(2)}` : MARK;
+    base = r2(base);
+    carry = r2(carry);
+    const amount = Math.max(0.01, r2(base + carry));
+    const notes = carry ? `${MARK}\nbase: ${base.toFixed(2)}\ncarry: ${carry.toFixed(2)}` : MARK;
     if (l) {
         await api("PUT", `api/v1/budgets/${b.id}/limits/${l.id}`, { amount: amount.toFixed(2), notes, fire_webhooks: false });
-        Object.assign(l, { amount, carry: applied });
+        Object.assign(l, { amount, base, carry });
     } else {
         const res = await api("POST", `api/v1/budgets/${b.id}/limits`, { start: c.start, end: c.end, amount: amount.toFixed(2), notes, fire_webhooks: false });
-        b.limits.push({ id: res.data.id, start: c.start, end: c.end, amount, carry: applied });
+        b.limits.push({ id: res.data.id, start: c.start, end: c.end, amount, base, carry });
     }
 }
 
@@ -214,7 +221,7 @@ async function copyLast(c, prev) {
         const mode = carryMode(b);
         if (mode !== "same") {
             spentBefore ??= new Map((await all(`api/v1/budgets?start=${prev.start}&end=${prev.end}`)).map((x) => [x.id, (x.attributes.spent ?? []).reduce((s, y) => s + Math.abs(num(y.sum)), 0)]));
-            const rest = (from.amount <= 0.01 ? 0 : from.amount) - (spentBefore.get(b.id) ?? 0);
+            const rest = budgetOf(from) - (spentBefore.get(b.id) ?? 0);
             carry = mode === "rollover" ? rest : Math.min(0, rest);
         }
         await setAmount(b, c, baseOf(from), Math.round(carry * 100) / 100);
@@ -246,7 +253,7 @@ function render(noBudget, note) {
     $('[data-act="next"]').disabled = at >= cycles.length - 1;
 
     const rows = budgets.map((b) => ({ b, l: limitFor(b, c) }));
-    const budgeted = rows.reduce((s, r) => s + (r.l && r.l.amount > 0.01 ? r.l.amount : 0), 0);
+    const budgeted = rows.reduce((s, r) => s + Math.max(0, budgetOf(r.l)), 0);
     const spent = rows.reduce((s, r) => s + (r.l ? r.b.spent : 0), 0);
     const left = budgeted - spent;
     const daysLeft = current ? daysBetween(now, c.end) + 1 : 0;
@@ -271,7 +278,7 @@ function render(noBudget, note) {
             ? `<div class="ff-cycle-rows">${rows
                   .sort((x, y) => (y.l ? 1 : 0) - (x.l ? 1 : 0) || y.b.spent - x.b.spent)
                   .map(({ b, l }) => {
-                      const amount = l && l.amount > 0.01 ? l.amount : 0; // 0.01: wiped out by carried overspending
+                      const amount = Math.max(0, budgetOf(l)); // nothing to spend when carried overspending ate it all
                       // without an amount there is nothing to be over: an empty bar and no red
                       const pct = amount > 0 ? Math.min(100, (b.spent / amount) * 100) : l && b.spent > 0 ? 100 : 0;
                       const rest = l ? amount - b.spent : 0;
@@ -324,7 +331,9 @@ async function show(note) {
         const c = cycles[at];
         const now = today();
         let copied = 0;
-        if (c.start <= now && now <= c.end && !budgets.some((b) => limitFor(b, c)) && at > 0) {
+        // a cycle Gaurav cleared on purpose stays empty until he copies by hand
+        const cleared = (prefs.cleared ?? []).some((d) => Math.abs(daysBetween(d, c.start)) <= 6);
+        if (c.start <= now && now <= c.end && !cleared && !budgets.some((b) => limitFor(b, c)) && at > 0) {
             copied = await copyLast(c, cycles[at - 1]);
         }
         const nb = await api("GET", `api/v1/insight/expense/no-budget?start=${c.start}&end=${c.end}`);
@@ -345,6 +354,12 @@ function rebuild(keepDate) {
     at = i >= 0 ? i : cycles.length - 1;
 }
 
+/** Updates the list of cycles cleared on purpose (their start dates) in the preference. */
+async function remember(change) {
+    prefs.cleared = change(prefs.cleared ?? []);
+    await api("POST", "api/v1/preferences", { name: PREF, data: prefs });
+}
+
 // ---------- events ----------
 function bind() {
     root.addEventListener("click", async (ev) => {
@@ -362,6 +377,7 @@ function bind() {
         } else if (t.dataset.act === "copy") {
             busy = true;
             try {
+                await remember((list) => list.filter((d) => Math.abs(daysBetween(d, cycles[at].start)) > 6));
                 const n = await copyLast(cycles[at], cycles[at - 1]);
                 await show(n ? `Copied ${n} amounts from the last cycle` : "Nothing to copy: the last cycle has no amounts these budgets lack");
             } catch (e) {
@@ -378,6 +394,7 @@ function bind() {
             }
             busy = true;
             try {
+                await remember((list) => [...list, cycles[at].start].slice(-6));
                 for (const b of budgets) {
                     await setAmount(b, cycles[at], 0);
                 }
